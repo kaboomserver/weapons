@@ -1,0 +1,11 @@
+name: Weapons
+main: pw.kaboom.weapons.Main
+description: Plugin that adds weapons.
+version: ${project.version}
+
+commands:
+   weapons:
+      aliases: weapon
+      description: Gives you a weapon
+      usage: /weapons
+      permission: weapons.command
