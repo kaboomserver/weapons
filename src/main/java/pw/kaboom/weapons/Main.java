@@ -43,32 +43,29 @@ public class Main extends JavaPlugin implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
 		Player player = (Player) event.getWhoClicked();
-		ItemStack clickedItem = event.getCurrentItem();
-		String name = clickedItem.getItemMeta().getDisplayName().toLowerCase();
 
-		if (event.getInventory().getName() == "Weapons") {
-			if (clickedItem != null) {
-				player.getInventory().addItem(clickedItem);
+		if (event.getInventory().getName().equals("Weapons")) {
+			if (event.getCurrentItem().getItemMeta().hasDisplayName() == true) {
+				player.getInventory().addItem(event.getCurrentItem());
 				player.closeInventory();
-				player.sendMessage("You have received the " + name + "!");
+				player.sendMessage("You have received the " + event.getCurrentItem().getItemMeta().getDisplayName().toLowerCase() + "!");
 			}
 		}
 	}
 
 	@EventHandler
 	void onPlayerInteract(PlayerInteractEvent event) {
-		Action action = event.getAction();
-		Player player = event.getPlayer();
-		boolean hasName = event.getItem().getItemMeta().hasDisplayName();
-		Material item = event.getMaterial();
-		String name = event.getItem().getItemMeta().getDisplayName();
-		Location lookPos = player.getTargetBlock((Set<Material>) null, 100).getLocation();
-		Location playerPos = player.getLocation();
-		World world = player.getLocation().getWorld();
+		if (event.getItem() != null && event.getItem().getItemMeta().hasDisplayName() == true) {
+			Action action = event.getAction();
+			Player player = event.getPlayer();
+			Material item = event.getMaterial();
+			String name = event.getItem().getItemMeta().getDisplayName();
+			Location lookPos = player.getTargetBlock((Set<Material>) null, 100).getLocation();
+			Location playerPos = player.getLocation();
+			World world = player.getLocation().getWorld();
 
-		if (hasName == true) {
 			if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-				if (item == Material.ANVIL && name == "Anvil Dropper") {
+				if (item == Material.ANVIL && name.equals("§rAnvil Dropper")) {
 					for (int x = -2; x <= 2; x += 1) {
 						for (int z = -2; z <= 2; z += 1) {
 							Location blockPos = new Location(world, playerPos.getX() - x, playerPos.getY(), playerPos.getZ() - z);
@@ -77,10 +74,10 @@ public class Main extends JavaPlugin implements Listener {
 						}
 					}
 					event.setCancelled(true);
-				} else if (item == Material.STICK && name == "Lightning Stick") {
+				} else if (item == Material.STICK && name.equals("§rLightning Stick")) {
 					world.strikeLightning(lookPos);
 					event.setCancelled(true);
-				} else if (item == Material.BLAZE_ROD && name == "Nuker") {
+				} else if (item == Material.BLAZE_ROD && name.equals("§rNuker")) {
 					Projectile projectile = (Projectile) world.spawnEntity(playerPos, EntityType.FIREBALL);
 					projectile.setShooter(player);
 					projectile.setVelocity(playerPos.getDirection().multiply(6));
@@ -88,7 +85,7 @@ public class Main extends JavaPlugin implements Listener {
 					world.playSound(playerPos, Sound.ENTITY_GHAST_SHOOT, 0.9F, 1.5F);
 					world.playSound(playerPos, Sound.ENTITY_BAT_TAKEOFF, 0.8F, 2.0F);
 					event.setCancelled(true);
-				} else if (item == Material.IRON_BARDING && name == "Sniper") {
+				} else if (item == Material.IRON_HORSE_ARMOR && name.equals("§Sniper")) {
 					Location projectilePos = new Location(world, playerPos.getX(), playerPos.getY() + 1.5, playerPos.getZ());
 					Projectile projectile = (Projectile) world.spawnEntity(projectilePos, EntityType.SNOWBALL);
 					projectile.setShooter(player);
@@ -97,7 +94,7 @@ public class Main extends JavaPlugin implements Listener {
 					event.setCancelled(true);
 				}
 			} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-				if (item == Material.IRON_BARDING && name == "Sniper") {
+				if (item == Material.IRON_HORSE_ARMOR && name.equals("§rSniper")) {
 					if (player.hasPotionEffect(PotionEffectType.SLOW)) {
 						player.removePotionEffect(PotionEffectType.SLOW);
 					} else {
@@ -123,10 +120,10 @@ class CommandWeapons implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		Player player = (Player)sender;
 		Inventory inventory = Bukkit.createInventory(null, 9, "Weapons");
-		addWeapon(inventory, Material.ANVIL, "Anvil Dropper");
-		addWeapon(inventory, Material.STICK, "Lightning Stick");
-		addWeapon(inventory, Material.BLAZE_ROD, "Nuker");
-		addWeapon(inventory, Material.IRON_BARDING, "Sniper");
+		addWeapon(inventory, Material.ANVIL, "§rAnvil Dropper");
+		addWeapon(inventory, Material.STICK, "§rLightning Stick");
+		addWeapon(inventory, Material.BLAZE_ROD, "§rNuker");
+		addWeapon(inventory, Material.IRON_HORSE_ARMOR, "§rSniper");
 		player.openInventory(inventory);
 		return true;
 	}
