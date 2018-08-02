@@ -2,19 +2,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pw.kaboom</groupId>
 	<artifactId>Weapons</artifactId>
-	<version>1.0.0</version>
-
-	<properties>
-		<maven.compiler.source>7</maven.compiler.source>
-		<maven.compiler.target>7</maven.compiler.target>
-	</properties>
+	<version>master</version>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.destroystokyo.paper</groupId>
 			<artifactId>paper-api</artifactId>
 			<version>1.13-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -27,12 +21,6 @@
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
 	</build>
 </project>
 

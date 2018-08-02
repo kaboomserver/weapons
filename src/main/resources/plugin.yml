@@ -1,6 +1,6 @@
 name: Weapons
 main: pw.kaboom.weapons.Main
-description: Plugin that adds weapons.
+description: Plugin that implements various kinds of weapons.
 api-version: 1.13
 version: ${project.version}
 
