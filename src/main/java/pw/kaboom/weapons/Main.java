@@ -85,7 +85,7 @@ public class Main extends JavaPlugin implements Listener {
 					world.playSound(playerPos, Sound.ENTITY_GHAST_SHOOT, 0.9F, 1.5F);
 					world.playSound(playerPos, Sound.ENTITY_BAT_TAKEOFF, 0.8F, 2.0F);
 					event.setCancelled(true);
-				} else if (item == Material.IRON_HORSE_ARMOR && name.equals("§Sniper")) {
+				} else if (item == Material.IRON_BARDING && name.equals("§Sniper")) {
 					Location projectilePos = new Location(world, playerPos.getX(), playerPos.getY() + 1.5, playerPos.getZ());
 					Projectile projectile = (Projectile) world.spawnEntity(projectilePos, EntityType.SNOWBALL);
 					projectile.setShooter(player);
@@ -94,7 +94,7 @@ public class Main extends JavaPlugin implements Listener {
 					event.setCancelled(true);
 				}
 			} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-				if (item == Material.IRON_HORSE_ARMOR && name.equals("§rSniper")) {
+				if (item == Material.IRON_BARDING && name.equals("§rSniper")) {
 					if (player.hasPotionEffect(PotionEffectType.SLOW)) {
 						player.removePotionEffect(PotionEffectType.SLOW);
 					} else {
@@ -123,7 +123,7 @@ class CommandWeapons implements CommandExecutor {
 		addWeapon(inventory, Material.ANVIL, "§rAnvil Dropper");
 		addWeapon(inventory, Material.STICK, "§rLightning Stick");
 		addWeapon(inventory, Material.BLAZE_ROD, "§rNuker");
-		addWeapon(inventory, Material.IRON_HORSE_ARMOR, "§rSniper");
+		addWeapon(inventory, Material.IRON_BARDING, "§rSniper");
 		player.openInventory(inventory);
 		return true;
 	}
