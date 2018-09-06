@@ -1,5 +1,6 @@
 package pw.kaboom.weapons;
 
+import java.util.Random;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 
@@ -33,6 +35,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import org.bukkit.util.Vector;
 
 public class Main extends JavaPlugin implements Listener {
 	public void onEnable() {
@@ -73,6 +77,23 @@ public class Main extends JavaPlugin implements Listener {
 							world.spawnFallingBlock(blockPos, blockMaterial);
 						}
 					}
+					event.setCancelled(true);
+				} else if (item == Material.MAGMA_CREAM && name.equals("§rArmageddon")) {
+					for (int i = 0; i < 5 + 1; ++i) {
+                int random = new Random().nextInt(3);
+
+                double offsetX = random;
+                double offsetY = random;
+                double offsetZ = random;
+
+Vector direction = player.getEyeLocation().getDirection().clone();
+
+direction = direction.add(new Vector(offsetX, offsetY, offsetZ));
+
+						Arrow arrow = player.launchProjectile(Arrow.class);
+						arrow.setVelocity(direction);
+					}
+					world.playSound(playerPos, Sound.ENTITY_GHAST_SHOOT, 0.9F, 1.5F);
 					event.setCancelled(true);
 				} else if (item == Material.STICK && name.equals("§rLightning Stick")) {
 					world.strikeLightning(lookPos);
@@ -121,6 +142,7 @@ class CommandWeapons implements CommandExecutor {
 		Player player = (Player)sender;
 		Inventory inventory = Bukkit.createInventory(null, 9, "Weapons");
 		addWeapon(inventory, Material.ANVIL, "§rAnvil Dropper");
+		addWeapon(inventory, Material.MAGMA_CREAM, "§rArmageddon");
 		addWeapon(inventory, Material.STICK, "§rLightning Stick");
 		addWeapon(inventory, Material.BLAZE_ROD, "§rNuker");
 		addWeapon(inventory, Material.IRON_BARDING, "§rSniper");
