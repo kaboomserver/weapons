@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 
@@ -15,9 +16,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.SpectralArrow;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -78,19 +79,19 @@ public class Main extends JavaPlugin implements Listener {
 						}
 					}
 					event.setCancelled(true);
-				} else if (item == Material.MAGMA_CREAM && name.equals("§rArmageddon")) {
-					for (int i = 0; i < 5 + 1; ++i) {
-                int random = new Random().nextInt(3);
+				} else if (item == Material.SPECTRAL_ARROW && name.equals("§rArcher")) {
+					for (int i = 0; i <= 30; ++i) {
+						/*int random = new Random();*/
 
-                double offsetX = random;
-                double offsetY = random;
-                double offsetZ = random;
+						double offsetX = (Math.random()*((15+15)+1))-15;
+						double offsetY = (Math.random()*((15+15)+1))-15;
+						double offsetZ = (Math.random()*((15+15)+1))-15;/*random.nextInt(40 + 1 + 40) - 40;*/
 
-Vector direction = player.getEyeLocation().getDirection().clone();
+						Vector direction = player.getEyeLocation().getDirection().clone();
 
-direction = direction.add(new Vector(offsetX, offsetY, offsetZ));
+						direction = direction.add(new Vector(offsetX, offsetY, offsetZ));
 
-						Arrow arrow = player.launchProjectile(Arrow.class);
+						SpectralArrow arrow = player.launchProjectile(SpectralArrow.class);
 						arrow.setVelocity(direction);
 					}
 					world.playSound(playerPos, Sound.ENTITY_GHAST_SHOOT, 0.9F, 1.5F);
@@ -115,7 +116,26 @@ direction = direction.add(new Vector(offsetX, offsetY, offsetZ));
 					event.setCancelled(true);
 				}
 			} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-				if (item == Material.IRON_BARDING && name.equals("§rSniper")) {
+				if (item == Material.BLAZE_POWDER && name.equals("§rLaser")) {
+					Location start = player.getEyeLocation();
+					Vector dir = playerPos.getDirection();
+					double distance = playerPos.distance(lookPos);
+
+					if (lookPos == null) {
+						distance = 50;
+					}
+
+					world.playSound(playerPos, Sound.ENTITY_FIREWORK_BLAST_FAR, 0.8F, 40.0F);
+					world.playSound(playerPos, Sound.ENTITY_FIREWORK_BLAST, 1.0F, 20.0F);
+
+					for (double i = 0; i <= distance; i += 0.1) {
+						start.add(dir.multiply(1.1));
+						world.spawnParticle(Particle.REDSTONE, start, 0, 1, 0, 0);
+					}
+
+					world.getBlockAt(lookPos).breakNaturally();
+					event.setCancelled(true);
+				} else if (item == Material.IRON_BARDING && name.equals("§rSniper")) {
 					if (player.hasPotionEffect(PotionEffectType.SLOW)) {
 						player.removePotionEffect(PotionEffectType.SLOW);
 					} else {
@@ -142,7 +162,8 @@ class CommandWeapons implements CommandExecutor {
 		Player player = (Player)sender;
 		Inventory inventory = Bukkit.createInventory(null, 9, "Weapons");
 		addWeapon(inventory, Material.ANVIL, "§rAnvil Dropper");
-		addWeapon(inventory, Material.MAGMA_CREAM, "§rArmageddon");
+		addWeapon(inventory, Material.SPECTRAL_ARROW, "§rArcher");
+		addWeapon(inventory, Material.BLAZE_POWDER, "§rLaser");
 		addWeapon(inventory, Material.STICK, "§rLightning Stick");
 		addWeapon(inventory, Material.BLAZE_ROD, "§rNuker");
 		addWeapon(inventory, Material.IRON_BARDING, "§rSniper");
