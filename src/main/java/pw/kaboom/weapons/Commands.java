@@ -24,13 +24,15 @@ class CommandWeapons implements CommandExecutor {
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		Player player = (Player)sender;
-		Inventory inventory = Bukkit.createInventory(null, 9, "Weapons");
+		Inventory inventory = Bukkit.createInventory(null, 18, "Weapons");
 		addWeapon(inventory, Material.ANVIL, "§rAnvil Dropper");
 		addWeapon(inventory, Material.SPECTRAL_ARROW, "§rArcher");
 		addWeapon(inventory, Material.FIREBALL, "§rArmageddon");
 		addWeapon(inventory, Material.MAGMA_CREAM, "§rBlobinator");
+		addWeapon(inventory, Material.EGG, "§rGrenade");
 		addWeapon(inventory, Material.BLAZE_POWDER, "§rLaser");
 		addWeapon(inventory, Material.STICK, "§rLightning Stick");
+		addWeapon(inventory, Material.GOLD_BARDING, "§rMachine Gun");
 		addWeapon(inventory, Material.BLAZE_ROD, "§rNuker");
 		addWeapon(inventory, Material.IRON_BARDING, "§rSniper");
 		player.openInventory(inventory);

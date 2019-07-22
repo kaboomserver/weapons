@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
@@ -20,6 +21,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 
+import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
@@ -27,6 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
 import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.TippedArrow;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,6 +37,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerEggThrowEvent;
 
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Wool;
@@ -41,9 +45,16 @@ import org.bukkit.material.Wool;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import org.bukkit.scheduler.BukkitRunnable;
+
 import org.bukkit.util.Vector;
 
 class Events implements Listener {
+	Main main;
+	Events(Main main) {
+		this.main = main;
+	}
+
 	@EventHandler
 	void onInventoryClick(InventoryClickEvent event) {
 		Player player = (Player) event.getWhoClicked();
@@ -95,7 +106,7 @@ class Events implements Listener {
 						Vector randomDirection = new Vector(randomX, randomY, randomZ).normalize().multiply(8);
 
 						SpectralArrow arrow = (SpectralArrow) world.spawnEntity(frontPos, EntityType.SPECTRAL_ARROW);
-						arrow.setCustomName("weaponsSpectralArrow");
+						arrow.setCustomName("weaponsProjectileBlock");
 						arrow.setShooter(player);
 						arrow.setVelocity(randomDirection);
 					}
@@ -116,6 +127,7 @@ class Events implements Listener {
 					for (int i = -12; i <= 12; i += 4) {
 						double x = frontPos.getX() + (i * Math.cos(Math.toRadians(frontPos.getYaw())));
 						double z = frontPos.getZ() + (i * Math.sin(Math.toRadians(frontPos.getYaw())));
+						Vector velocity = direction.multiply(12);
 
 						Fireball fireball = (Fireball) world.spawnEntity(
 							new Location(world, x, frontPos.getY(), z),
@@ -124,7 +136,7 @@ class Events implements Listener {
 
 						fireball.setBounce(false);
 						fireball.setCustomName("weaponsArmegaddonBall");
-						fireball.setDirection(direction.multiply(12));
+						fireball.setDirection(velocity);
 						fireball.setShooter(player);
 						fireball.setYield(5);
 					}
@@ -133,10 +145,12 @@ class Events implements Listener {
 
 					event.setCancelled(true);
 				} else if (item == Material.MAGMA_CREAM && name.equals("§rBlobinator")) {
-					Snowball snowball = (Snowball) world.spawnEntity(frontPos, EntityType.SNOWBALL);
+					Vector velocity = direction.multiply(8);
+
+					Snowball snowball = player.launchProjectile(Snowball.class);
 					snowball.setCustomName("weaponsBlobinatorBall");
 					snowball.setShooter(player);
-					snowball.setVelocity(direction.multiply(8));
+					snowball.setVelocity(velocity);
 
 					world.playSound(eyePos, Sound.ITEM_BOTTLE_EMPTY, 1.0F, 0.8F);
 
@@ -146,19 +160,24 @@ class Events implements Listener {
 
 					event.setCancelled(true);
 				} else if (item == Material.BLAZE_ROD && name.equals("§rNuker")) {
-					Fireball fireball = (Fireball) world.spawnEntity(frontPos, EntityType.FIREBALL);
-					fireball.setVelocity(direction.multiply(10));
+					Vector velocity = direction.multiply(10);
+
+					Fireball fireball = player.launchProjectile(Fireball.class);
+					fireball.setCustomName("weaponsProjectileBlock");
+					fireball.setVelocity(velocity);
 					fireball.setYield(8);
-					/*world.createExplosion(lookPos, 6);*/
 
 					world.playSound(eyePos, Sound.ENTITY_GHAST_SHOOT, 0.9F, 1.5F);
 					world.playSound(eyePos, Sound.ENTITY_BAT_TAKEOFF, 0.8F, 2.0F);
 
 					event.setCancelled(true);
 				} else if (item == Material.IRON_BARDING && name.equals("§rSniper")) {
-					Snowball snowball = (Snowball) world.spawnEntity(frontPos, EntityType.SNOWBALL);
+					Vector velocity = direction.multiply(12);
+
+					Snowball snowball = player.launchProjectile(Snowball.class);
+					snowball.setCustomName("weaponsProjectileBlock");
 					snowball.setShooter(player);
-					snowball.setVelocity(direction.multiply(6));
+					snowball.setVelocity(velocity);
 
 					world.playSound(eyePos, Sound.BLOCK_PISTON_CONTRACT, 1.0F, 63.0F);
 
@@ -183,6 +202,44 @@ class Events implements Listener {
 					world.getBlockAt(lookPos).breakNaturally();
 
 					event.setCancelled(true);
+				} else if (item == Material.GOLD_BARDING && name.equals("§rMachine Gun")) {
+					final UUID playerUUID = player.getUniqueId();
+
+					if (!main.machineGunActive.contains(playerUUID)) {
+						main.machineGunActive.add(playerUUID);
+						final PlayerInteractEvent eventMachine = event;
+
+						new BukkitRunnable() {
+							int i = 0;
+							public void run() {
+								i++;
+
+								Player playerMachine = eventMachine.getPlayer();
+								Location eyePosMachine = playerMachine.getEyeLocation();
+								World worldMachine = playerMachine.getLocation().getWorld();
+								Vector velocity = eyePosMachine.getDirection().multiply(12);
+
+								TippedArrow arrow = playerMachine.launchProjectile(TippedArrow.class);
+								PotionEffect harm = new PotionEffect(PotionEffectType.HARM, 90000, 3, true, true);
+								PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 90000, 3, true, true);
+
+								arrow.setCustomName("weaponsProjectileBlock");
+								arrow.addCustomEffect(harm, true);
+								arrow.addCustomEffect(slow, true);
+								arrow.setShooter(playerMachine);
+								arrow.setVelocity(velocity);
+
+								worldMachine.playSound(eyePosMachine, Sound.ENTITY_GENERIC_EXPLODE, 1.0F, 63.0F);
+
+								if (i == 20) {
+									main.machineGunActive.remove(playerUUID);
+									cancel();
+								}
+							}
+						}.runTaskTimer(main, 0L, 1L);
+					}
+
+					event.setCancelled(true);
 				} else if (item == Material.IRON_BARDING && name.equals("§rSniper")) {
 					if (player.hasPotionEffect(PotionEffectType.SLOW)) {
 						player.removePotionEffect(PotionEffectType.SLOW);
@@ -194,6 +251,17 @@ class Events implements Listener {
 					event.setCancelled(true);
 				}
 			}
+		}
+	}
+
+	@EventHandler
+	void onPlayerEggThrow(PlayerEggThrowEvent event) {
+		String name = event.getPlayer().getItemInHand().getItemMeta().getDisplayName();
+
+		if (name.equals("§rGrenade")) {
+			Egg egg = event.getEgg();
+			egg.setCustomName("weaponsGrenade");
+			event.setHatching(false);
 		}
 	}
 
@@ -216,7 +284,7 @@ class Events implements Listener {
 			projectile.getCustomName().equals("weaponsBlobinatorBall")) {
 				event.setCancelled(true);
 			} else if (projectile.getType() == EntityType.SPECTRAL_ARROW &&
-			projectile.getCustomName().equals("weaponsSpectralArrow")) {
+			projectile.getCustomName().equals("weaponsProjectileBlock")) {
 				if (collidedWith.getType() == EntityType.PLAYER &&
 				projectile.getShooter() instanceof Player &&
 				((Player)projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
@@ -230,6 +298,19 @@ class Events implements Listener {
 	void onProjectileHit(ProjectileHitEvent event) {
 		Projectile projectile = event.getEntity();
 		Block hitBlock = event.getHitBlock();
+
+		if (projectile.getType() == EntityType.EGG &&
+		projectile.getCustomName() != null &&
+		projectile.getCustomName().equals("weaponsGrenade")) {
+			World world = projectile.getLocation().getWorld();
+			world.createExplosion(projectile.getLocation(), 6);
+		}
+
+		if (projectile.getType() == EntityType.TIPPED_ARROW &&
+		projectile.getCustomName() != null &&
+		projectile.getCustomName().equals("weaponsProjectileBlock")) {
+			projectile.remove();
+		}
 
 		if (projectile.getType() == EntityType.SNOWBALL &&
 		hitBlock != null &&
