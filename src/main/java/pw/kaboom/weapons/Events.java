@@ -6,10 +6,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,10 +33,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
-import org.bukkit.material.MaterialData;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+
 import org.bukkit.material.Wool;
 
 import org.bukkit.potion.PotionEffect;
@@ -49,6 +48,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import org.bukkit.util.Vector;
 
+import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+
 class Events implements Listener {
 	Main main;
 	Events(Main main) {
@@ -57,80 +58,106 @@ class Events implements Listener {
 
 	@EventHandler
 	void onInventoryClick(InventoryClickEvent event) {
-		Player player = (Player) event.getWhoClicked();
+		if ("Weapons".equals(event.getView().getTitle())) {
+			final ItemStack item = event.getCurrentItem();
 
-		if (event.getInventory().getName().equals("Weapons")) {
-			if (event.getCurrentItem().getItemMeta().hasDisplayName() == true) {
-				player.getInventory().addItem(event.getCurrentItem());
+			if (item.getItemMeta().hasDisplayName() == true) {
+				final Player player = (Player) event.getWhoClicked();
+
+				player.getInventory().addItem(item);
 				player.closeInventory();
-				player.sendMessage("You have received the " + event.getCurrentItem().getItemMeta().getDisplayName().toLowerCase() + "!");
+				player.sendMessage("You have received the " + item.getItemMeta().getDisplayName().toLowerCase() + "!");
 			}
 		}
 	}
 
 	@EventHandler
+	void onPlayerEggThrow(PlayerEggThrowEvent event) {
+		final PlayerInventory inventory = event.getPlayer().getInventory();
+		final String name = inventory.getItemInMainHand().getItemMeta().getDisplayName();
+
+		if ("§rGrenade".equals(name)) {
+			final Egg egg = event.getEgg();
+			egg.setCustomName("weaponsGrenade");
+			event.setHatching(false);
+		}
+	}
+
+	@EventHandler
 	void onPlayerInteract(PlayerInteractEvent event) {
-		if (event.getItem() != null && event.getItem().getItemMeta().hasDisplayName() == true) {
-			Action action = event.getAction();
-			Player player = event.getPlayer();
-			Material item = event.getMaterial();
-			String name = event.getItem().getItemMeta().getDisplayName();
+		if (event.hasItem() == true &&
+			event.getItem().getItemMeta().hasDisplayName() == true) {
+			final Action action = event.getAction();
+			final Material item = event.getMaterial();
+			final String name = event.getItem().getItemMeta().getDisplayName();
 
-			World world = player.getLocation().getWorld();
-			Location eyePos = player.getEyeLocation();
-			Location lookPos = player.getTargetBlock((Set<Material>) null, 100).getLocation();
-			Location playerPos = player.getLocation();
-
-			Vector direction = eyePos.getDirection();
-			Location frontPos = playerPos.add(direction);
-
-			if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-				if (item == Material.ANVIL && name.equals("§rAnvil Dropper")) {
+			if (action == Action.LEFT_CLICK_AIR ||
+				action == Action.LEFT_CLICK_BLOCK) {
+				if (item == Material.ANVIL &&
+					"§rAnvil Dropper".equals(name)) {
 					for (int x = -2; x <= 2; x++) {
 						for (int z = -2; z <= 2; z++) {
-							Location blockPos = new Location(world, playerPos.getX() - x, playerPos.getY(), playerPos.getZ() - z);
-							MaterialData blockMaterial = new MaterialData(Material.ANVIL);
-							world.spawnFallingBlock(blockPos, blockMaterial);
+							final Location blockLocation = event.getPlayer().getLocation().subtract(x, 0, z);
+							final World world = event.getPlayer().getWorld();
+
+							world.spawnFallingBlock(
+								blockLocation,
+								Material.ANVIL.createBlockData()
+							);
 						}
 					}
 
 					event.setCancelled(true);
-				} else if (item == Material.SPECTRAL_ARROW && name.equals("§rArcher")) {
-					world.playSound(playerPos, Sound.BLOCK_ANVIL_DESTROY, 1.0F, 1.5F);
+				} else if (item == Material.SPECTRAL_ARROW &&
+					"§rArcher".equals(name)) {
+					final World world = event.getPlayer().getWorld();
 
 					for (int i = 0; i <= 20; i++) {
-						double randomX = (Math.random() * ((15 + 15) + 1)) - 15;
-						double randomY = (Math.random() * ((15 + 15) + 1)) - 15;
-						double randomZ = (Math.random() * ((15 + 15) + 1)) - 15;
+						final double randomX = (Math.random() * ((15 + 15) + 1)) - 15;
+						final double randomY = (Math.random() * ((15 + 15) + 1)) - 15;
+						final double randomZ = (Math.random() * ((15 + 15) + 1)) - 15;
 
-						Vector randomDirection = new Vector(randomX, randomY, randomZ).normalize().multiply(8);
+						final Player player = event.getPlayer();
+						final Vector randomDirection = new Vector(
+							randomX,
+							randomY,
+							randomZ).normalize().multiply(8);
 
-						SpectralArrow arrow = (SpectralArrow) world.spawnEntity(frontPos, EntityType.SPECTRAL_ARROW);
-						arrow.setCustomName("weaponsProjectileBlock");
+						final SpectralArrow arrow = (SpectralArrow) world.spawnEntity(
+							player.getLocation(),
+							EntityType.SPECTRAL_ARROW
+						);
+						arrow.setCustomName("weaponsCancelCollision");
 						arrow.setShooter(player);
 						arrow.setVelocity(randomDirection);
 					}
 
+					final Location eyeLocation = event.getPlayer().getEyeLocation();
+					final float volume = 1.0F;
+					final float pitch = 1.5F;
+
+					world.playSound(
+						eyeLocation,
+						Sound.BLOCK_ANVIL_DESTROY,
+						volume,
+						pitch
+					);
 					event.setCancelled(true);
-				} else if (item == Material.FIREBALL && name.equals("§rArmageddon")) {
-					/*for (int i = 0; i <= 30; i++) {
-						double randomX = (Math.random() * ((15 + 15) + 1)) - 15;
-						double randomY = (Math.random() * ((15 + 15) + 1)) - 15;
-						double randomZ = (Math.random() * ((15 + 15) + 1)) - 15;
+				} else if (item == Material.FIRE_CHARGE &&
+					"§rArmageddon".equals(name)) {
+					final World world = event.getPlayer().getWorld();
 
-						Vector direction = new Vector(randomX, randomY, randomZ).normalize().multiply(6);
-
-						Fireball arrow = player.launchProjectile(Fireball.class);
-						arrow.setCustomName(player.getName() + "fireballshooter");
-						arrow.setDirection(direction);
-					}*/
 					for (int i = -12; i <= 12; i += 4) {
-						double x = frontPos.getX() + (i * Math.cos(Math.toRadians(frontPos.getYaw())));
-						double z = frontPos.getZ() + (i * Math.sin(Math.toRadians(frontPos.getYaw())));
-						Vector velocity = direction.multiply(12);
+						final Player player = event.getPlayer();
+						final Location eyeLocation = player.getEyeLocation();
 
-						Fireball fireball = (Fireball) world.spawnEntity(
-							new Location(world, x, frontPos.getY(), z),
+						final double x = (i * Math.cos(Math.toRadians(eyeLocation.getYaw())));
+						final double z = (i * Math.sin(Math.toRadians(eyeLocation.getYaw())));
+
+						final Vector velocity = eyeLocation.getDirection().multiply(12);
+
+						final Fireball fireball = (Fireball) world.spawnEntity(
+							eyeLocation.add(x, 0, z),
 							EntityType.FIREBALL
 						);
 
@@ -141,69 +168,163 @@ class Events implements Listener {
 						fireball.setYield(5);
 					}
 
-					world.playSound(eyePos, Sound.ENTITY_GHAST_SHOOT, 0.9F, 1.5F);
+					final Location eyeLocation = event.getPlayer().getEyeLocation();
+					final float volume = 0.9F;
+					final float pitch = 1.5F;
 
+					world.playSound(
+						eyeLocation,
+						Sound.ENTITY_GHAST_SHOOT,
+						volume,
+						pitch
+					);
 					event.setCancelled(true);
-				} else if (item == Material.MAGMA_CREAM && name.equals("§rBlobinator")) {
-					Vector velocity = direction.multiply(8);
+				} else if (item == Material.MAGMA_CREAM &&
+					"§rBlobinator".equals(name)) {
+					final Player player = event.getPlayer();
+					final Location eyeLocation = player.getEyeLocation();
+					final Vector velocity = eyeLocation.getDirection().multiply(8);
 
-					Snowball snowball = player.launchProjectile(Snowball.class);
+					final Snowball snowball = player.launchProjectile(Snowball.class);
 					snowball.setCustomName("weaponsBlobinatorBall");
 					snowball.setShooter(player);
 					snowball.setVelocity(velocity);
 
-					world.playSound(eyePos, Sound.ITEM_BOTTLE_EMPTY, 1.0F, 0.8F);
+					final World world = event.getPlayer().getWorld();
+					final float volume = 1.0F;
+					final float pitch = 0.8F;
+
+					world.playSound(
+						eyeLocation,
+						Sound.ITEM_BOTTLE_EMPTY,
+						volume,
+						pitch
+					);
+					event.setCancelled(true);
+				} else if (item == Material.STICK &&
+					"§rLightning Stick".equals(name)) {
+					final Player player = event.getPlayer();
+					final Location lookLocation = player.getTargetBlock((Set<Material>) null, 100).getLocation();
+					final World world = player.getWorld();
+
+					world.strikeLightning(lookLocation);
 
 					event.setCancelled(true);
-				} else if (item == Material.STICK && name.equals("§rLightning Stick")) {
-					world.strikeLightning(lookPos);
+				} else if (item == Material.BLAZE_ROD &&
+					"§rNuker".equals(name)) {
+					final Player player = event.getPlayer();
+					final Location eyeLocation = player.getEyeLocation();
+					final Vector velocity = eyeLocation.getDirection().multiply(10);
 
-					event.setCancelled(true);
-				} else if (item == Material.BLAZE_ROD && name.equals("§rNuker")) {
-					Vector velocity = direction.multiply(10);
-
-					Fireball fireball = player.launchProjectile(Fireball.class);
-					fireball.setCustomName("weaponsProjectileBlock");
+					final Fireball fireball = player.launchProjectile(Fireball.class);
+					fireball.setCustomName("weaponsCancelCollision");
+					fireball.setShooter(player);
 					fireball.setVelocity(velocity);
 					fireball.setYield(8);
 
-					world.playSound(eyePos, Sound.ENTITY_GHAST_SHOOT, 0.9F, 1.5F);
-					world.playSound(eyePos, Sound.ENTITY_BAT_TAKEOFF, 0.8F, 2.0F);
+					final World world = event.getPlayer().getWorld();
+					final float volume1 = 0.9F;
+					final float pitch1 = 1.5F;
+					final float volume2 = 0.8F;
+					final float pitch2 = 2.0F;
 
+					world.playSound(
+						eyeLocation,
+						Sound.ENTITY_GHAST_SHOOT,
+						volume1,
+						pitch1
+					);
+					world.playSound(
+						eyeLocation,
+						Sound.ENTITY_BAT_TAKEOFF,
+						volume2,
+						pitch2
+					);
 					event.setCancelled(true);
-				} else if (item == Material.IRON_BARDING && name.equals("§rSniper")) {
-					Vector velocity = direction.multiply(12);
+				} else if (item == Material.IRON_HORSE_ARMOR &&
+					"§rSniper".equals(name)) {
+					final Player player = event.getPlayer();
+					final Location eyeLocation = player.getEyeLocation();
+					final Vector velocity = eyeLocation.getDirection().multiply(12);
 
-					Snowball snowball = player.launchProjectile(Snowball.class);
-					snowball.setCustomName("weaponsProjectileBlock");
+					final Snowball snowball = player.launchProjectile(Snowball.class);
+					snowball.setCustomName("weaponsCancelCollision");
 					snowball.setShooter(player);
 					snowball.setVelocity(velocity);
 
-					world.playSound(eyePos, Sound.BLOCK_PISTON_CONTRACT, 1.0F, 63.0F);
+					final World world = event.getPlayer().getWorld();
+					final float volume = 1.0F;
+					final float pitch = 63.0F;
 
+					world.playSound(
+						eyeLocation,
+						Sound.BLOCK_PISTON_CONTRACT,
+						volume,
+						pitch
+					);
 					event.setCancelled(true);
 				}
-			} else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-				if (item == Material.BLAZE_POWDER && name.equals("§rLaser")) {
-					double distance = eyePos.distance(lookPos);
+			} else if (action == Action.RIGHT_CLICK_AIR ||
+				action == Action.RIGHT_CLICK_BLOCK) {
+				if (item == Material.BLAZE_POWDER &&
+					"§rLaser".equals(name)) {
+					final Player player = event.getPlayer();
+					final Location eyeLocation = player.getEyeLocation();
+					final Vector direction = eyeLocation.getDirection();
+					final Location lookLocation = player.getTargetBlock(
+						(Set<Material>) null,
+						100).getLocation();
+					double distance = eyeLocation.distance(lookLocation);
+					final Location particleLocation = player.getEyeLocation();
+					final World world = player.getWorld();
 
-					if (lookPos == null) {
+					if (lookLocation == null) {
 						distance = 50;
 					}
 
-					world.playSound(eyePos, Sound.ENTITY_FIREWORK_BLAST_FAR, 0.8F, 40.0F);
-					world.playSound(eyePos, Sound.ENTITY_FIREWORK_BLAST, 1.0F, 20.0F);
-
 					for (double i = 0; i <= distance; i++) {
-						frontPos.add(direction);
-						world.spawnParticle(Particle.REDSTONE, frontPos, 0, 1, 0, 0);
+						particleLocation.add(direction);
+
+						final int count = 1;
+						final double offsetX = 0;
+						final double offsetY = 0;
+						final double offsetZ = 0;
+						final Particle.DustOptions dustOptions = new Particle.DustOptions(Color.RED, 1);
+
+						world.spawnParticle(
+							Particle.REDSTONE,
+							particleLocation,
+							count,
+							offsetX,
+							offsetY,
+							offsetZ,
+							dustOptions
+						);
 					}
 
-					world.getBlockAt(lookPos).breakNaturally();
+					world.getBlockAt(lookLocation).breakNaturally();
 
+					final float volume1 = 0.8F;
+					final float pitch1 = 63.0F;
+					final float volume2 = 1.0F;
+					final float pitch2 = 20.0F;
+
+					world.playSound(
+						eyeLocation,
+						Sound.ENTITY_FIREWORK_ROCKET_BLAST_FAR,
+						volume1,
+						pitch1
+					);
+					world.playSound(
+						eyeLocation,
+						Sound.ENTITY_FIREWORK_ROCKET_BLAST,
+						volume2,
+						pitch2
+					);
 					event.setCancelled(true);
-				} else if (item == Material.GOLD_BARDING && name.equals("§rMachine Gun")) {
-					final UUID playerUUID = player.getUniqueId();
+				} else if (item == Material.GOLDEN_HORSE_ARMOR &&
+					"§rMachine Gun".equals(name)) {
+					final UUID playerUUID = event.getPlayer().getUniqueId();
 
 					if (!main.machineGunActive.contains(playerUUID)) {
 						main.machineGunActive.add(playerUUID);
@@ -214,22 +335,40 @@ class Events implements Listener {
 							public void run() {
 								i++;
 
-								Player playerMachine = eventMachine.getPlayer();
-								Location eyePosMachine = playerMachine.getEyeLocation();
-								World worldMachine = playerMachine.getLocation().getWorld();
-								Vector velocity = eyePosMachine.getDirection().multiply(12);
+								final Player player = eventMachine.getPlayer();
+								final Location eyeLocation = player.getEyeLocation();
+								final World world = player.getWorld();
+								final Vector velocity = eyeLocation.getDirection().multiply(12);
 
-								TippedArrow arrow = playerMachine.launchProjectile(TippedArrow.class);
-								PotionEffect harm = new PotionEffect(PotionEffectType.HARM, 90000, 3, true, true);
-								PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 90000, 3, true, true);
+								final TippedArrow arrow = player.launchProjectile(TippedArrow.class);
+
+								final int duration = 90000;
+								final int amplifier = 3;
+								final boolean ambient = true;
+								final boolean particles = false;
+
+								final PotionEffect harm = new PotionEffect(
+									PotionEffectType.HARM,
+									duration,
+									amplifier,
+									ambient,
+									particles
+								);
 
 								arrow.setCustomName("weaponsProjectileBlock");
 								arrow.addCustomEffect(harm, true);
-								arrow.addCustomEffect(slow, true);
-								arrow.setShooter(playerMachine);
+								arrow.setShooter(player);
 								arrow.setVelocity(velocity);
 
-								worldMachine.playSound(eyePosMachine, Sound.ENTITY_GENERIC_EXPLODE, 1.0F, 63.0F);
+								final float volume = 1.0F;
+								final float pitch = 63.0F;
+
+								world.playSound(
+									eyeLocation,
+									Sound.ENTITY_GENERIC_EXPLODE,
+									volume,
+									pitch
+								);
 
 								if (i == 20) {
 									main.machineGunActive.remove(playerUUID);
@@ -240,11 +379,21 @@ class Events implements Listener {
 					}
 
 					event.setCancelled(true);
-				} else if (item == Material.IRON_BARDING && name.equals("§rSniper")) {
+				} else if (item == Material.IRON_HORSE_ARMOR &&
+					"§rSniper".equals(name)) {
+					final Player player = event.getPlayer();
+
 					if (player.hasPotionEffect(PotionEffectType.SLOW)) {
 						player.removePotionEffect(PotionEffectType.SLOW);
 					} else {
-						PotionEffect effect = new PotionEffect(PotionEffectType.SLOW, 90000, 7);
+						final int duration = 90000;
+						final int amplifier = 7;
+
+						final PotionEffect effect = new PotionEffect(
+							PotionEffectType.SLOW,
+							duration,
+							amplifier
+						);
 						player.addPotionEffect(effect);
 					}
 
@@ -255,39 +404,36 @@ class Events implements Listener {
 	}
 
 	@EventHandler
-	void onPlayerEggThrow(PlayerEggThrowEvent event) {
-		String name = event.getPlayer().getItemInHand().getItemMeta().getDisplayName();
-
-		if (name.equals("§rGrenade")) {
-			Egg egg = event.getEgg();
-			egg.setCustomName("weaponsGrenade");
-			event.setHatching(false);
-		}
-	}
-
-	@EventHandler
 	void onProjectileCollide(ProjectileCollideEvent event) {
-		Projectile projectile = event.getEntity();
-		Entity collidedWith = event.getCollidedWith();
+		if (event.getEntityType() == EntityType.FIREBALL) {
+			final Projectile projectile = event.getEntity();
 
-		if (projectile.getCustomName() != null) {
-			if (projectile.getType() == EntityType.FIREBALL &&
-			projectile.getCustomName().equals("weaponsArmegaddonBall")) {
+			if ("weaponsArmegaddonBall".equals(projectile.getCustomName())) {
+				final Entity collidedWith = event.getCollidedWith();
+
 				if (collidedWith.getType() == EntityType.PLAYER &&
-				projectile.getShooter() instanceof Player &&
-				((Player)projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
+					projectile.getShooter() instanceof Player &&
+					((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
 					event.setCancelled(true);
 				} else if (collidedWith.getType() == EntityType.FIREBALL) {
 					event.setCancelled(true);
 				}
-			} else if (projectile.getType() == EntityType.SNOWBALL &&
-			projectile.getCustomName().equals("weaponsBlobinatorBall")) {
+			}
+		} else if (event.getEntityType() == EntityType.SNOWBALL) {
+			final Projectile projectile = event.getEntity();
+
+			if ("weaponsBlobinatorBall".equals(projectile.getCustomName())) {
 				event.setCancelled(true);
-			} else if (projectile.getType() == EntityType.SPECTRAL_ARROW &&
-			projectile.getCustomName().equals("weaponsProjectileBlock")) {
+			}
+		} else if (event.getEntityType() == EntityType.SPECTRAL_ARROW) {
+			final Projectile projectile = event.getEntity();
+
+			if ("weaponsProjectileBlock".equals(projectile.getCustomName())) {
+				final Entity collidedWith = event.getCollidedWith();
+
 				if (collidedWith.getType() == EntityType.PLAYER &&
-				projectile.getShooter() instanceof Player &&
-				((Player)projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
+					projectile.getShooter() instanceof Player &&
+					((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
 					event.setCancelled(true);
 				}
 			}
@@ -296,57 +442,59 @@ class Events implements Listener {
 
 	@EventHandler
 	void onProjectileHit(ProjectileHitEvent event) {
-		Projectile projectile = event.getEntity();
-		Block hitBlock = event.getHitBlock();
+		if (event.getEntityType() == EntityType.EGG) {
+			final Projectile projectile = event.getEntity();
 
-		if (projectile.getType() == EntityType.EGG &&
-		projectile.getCustomName() != null &&
-		projectile.getCustomName().equals("weaponsGrenade")) {
-			World world = projectile.getLocation().getWorld();
-			world.createExplosion(projectile.getLocation(), 6);
-		}
+			if ("weaponsGrenade".equals(projectile.getCustomName())) {
+				final Location location = projectile.getLocation();
+				final World world = location.getWorld();
+				final float power = 6;
 
-		if (projectile.getType() == EntityType.TIPPED_ARROW &&
-		projectile.getCustomName() != null &&
-		projectile.getCustomName().equals("weaponsProjectileBlock")) {
-			projectile.remove();
-		}
+				world.createExplosion(location, power);
+			}
+		} else if (event.getEntityType() == EntityType.TIPPED_ARROW) {
+			final Projectile projectile = event.getEntity();
 
-		if (projectile.getType() == EntityType.SNOWBALL &&
-		hitBlock != null &&
-		projectile.getShooter() != null) {
-			if (projectile.getCustomName() != null && projectile.getCustomName().equals("weaponsBlobinatorBall")) {
-				int radius = 4;
-				World world = projectile.getWorld();
+			if ("weaponsProjectileBlock".equals(projectile.getCustomName())) {
+				projectile.remove();
+			}
+		} else if (event.getEntityType() == EntityType.SNOWBALL) {
+			final Block hitBlock = event.getHitBlock();
+			final Projectile projectile = event.getEntity();
 
-				DyeColor[] colors = DyeColor.values();
-				Random random = new Random();
-				DyeColor color = colors[random.nextInt(colors.length)];
+			if (hitBlock != null &&
+				"weaponsBlobinatorBall".equals(projectile.getCustomName())) {
+				final int radius = 4;
+				final World world = projectile.getWorld();
 
-				HashSet<BlockFace> faces = new HashSet<BlockFace>(Arrays.asList(new BlockFace[] {
+				final DyeColor[] colors = DyeColor.values();
+				final Random random = new Random();
+				final DyeColor color = colors[random.nextInt(colors.length)];
+
+				final HashSet<BlockFace> faces = new HashSet<BlockFace>(Arrays.asList(new BlockFace[] {
 					BlockFace.NORTH,
 					BlockFace.SOUTH,
 					BlockFace.WEST,
 					BlockFace.EAST,
 					BlockFace.UP,
-					BlockFace.DOWN
+					BlockFace.DOWN,
 				}));
 
 				for (int x = -radius; x < radius; x++) {
 					for (int y = -radius; y < radius; y++) {
 						for (int z = -radius; z < radius; z++) {
-							Location blockLocation = new Location(world, hitBlock.getX() + x, hitBlock.getY() + y, hitBlock.getZ() + z);
+							final Location blockLocation = hitBlock.getLocation().add(x, y, z);
 
 							if (blockLocation.distance(hitBlock.getLocation()) <= radius) {
-								Block block = world.getBlockAt(blockLocation);
+								final Block block = world.getBlockAt(blockLocation);
 
 								if (block.getType() != Material.AIR) {
 									for (BlockFace face : faces) {
 										if (block.getRelative(face).getType() == Material.AIR) {
-											block.setType(Material.WOOL);
+											block.setType(Material.LEGACY_WOOL);
 
-											BlockState state = block.getState();
-											Wool wool = (Wool) state.getData();
+											final BlockState state = block.getState();
+											final Wool wool = (Wool) state.getData();
 											wool.setColor(color);
 											state.setData(wool);
 											state.update();

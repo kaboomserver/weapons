@@ -15,26 +15,28 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 class CommandWeapons implements CommandExecutor {
 	private void addWeapon(Inventory inventory, Material material, String name) {
-		ItemStack item = new ItemStack​(material, 1);
-		ItemMeta itemMeta = item.getItemMeta();
+		final ItemStack item = new ItemStack​(material, 1);
+		final ItemMeta itemMeta = item.getItemMeta();
+
 		itemMeta.setDisplayName(name);
 		item.setItemMeta(itemMeta);
 		inventory.addItem(item);
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		Player player = (Player)sender;
-		Inventory inventory = Bukkit.createInventory(null, 18, "Weapons");
+		final Player player = (Player) sender;
+		final Inventory inventory = Bukkit.createInventory(null, 18, "Weapons");
+
 		addWeapon(inventory, Material.ANVIL, "§rAnvil Dropper");
 		addWeapon(inventory, Material.SPECTRAL_ARROW, "§rArcher");
-		addWeapon(inventory, Material.FIREBALL, "§rArmageddon");
+		addWeapon(inventory, Material.FIRE_CHARGE, "§rArmageddon");
 		addWeapon(inventory, Material.MAGMA_CREAM, "§rBlobinator");
 		addWeapon(inventory, Material.EGG, "§rGrenade");
 		addWeapon(inventory, Material.BLAZE_POWDER, "§rLaser");
 		addWeapon(inventory, Material.STICK, "§rLightning Stick");
-		addWeapon(inventory, Material.GOLD_BARDING, "§rMachine Gun");
+		addWeapon(inventory, Material.GOLDEN_HORSE_ARMOR, "§rMachine Gun");
 		addWeapon(inventory, Material.BLAZE_ROD, "§rNuker");
-		addWeapon(inventory, Material.IRON_BARDING, "§rSniper");
+		addWeapon(inventory, Material.IRON_HORSE_ARMOR, "§rSniper");
 		player.openInventory(inventory);
 		return true;
 	}
