@@ -1,13 +1,10 @@
 package pw.kaboom.weapons;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Color;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -16,7 +13,6 @@ import org.bukkit.World;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Entity;
@@ -38,8 +34,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-
-import org.bukkit.material.Wool;
 
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -151,8 +145,8 @@ class Events implements Listener {
 						final Player player = event.getPlayer();
 						final Location eyeLocation = player.getEyeLocation();
 
-						final double x = (i * Math.cos(Math.toRadians(eyeLocation.getYaw())));
-						final double z = (i * Math.sin(Math.toRadians(eyeLocation.getYaw())));
+						final double x = i * Math.cos(Math.toRadians(eyeLocation.getYaw()));
+						final double z = i * Math.sin(Math.toRadians(eyeLocation.getYaw()));
 
 						final Vector velocity = eyeLocation.getDirection().multiply(12);
 
@@ -466,19 +460,8 @@ class Events implements Listener {
 				"weaponsBlobinatorBall".equals(projectile.getCustomName())) {
 				final int radius = 4;
 				final World world = projectile.getWorld();
-
-				final DyeColor[] colors = DyeColor.values();
 				final Random random = new Random();
-				final DyeColor color = colors[random.nextInt(colors.length)];
-
-				final HashSet<BlockFace> faces = new HashSet<BlockFace>(Arrays.asList(new BlockFace[] {
-					BlockFace.NORTH,
-					BlockFace.SOUTH,
-					BlockFace.WEST,
-					BlockFace.EAST,
-					BlockFace.UP,
-					BlockFace.DOWN,
-				}));
+				final Material color = main.colors.get(random.nextInt(main.colors.size()));
 
 				for (int x = -radius; x < radius; x++) {
 					for (int y = -radius; y < radius; y++) {
@@ -488,16 +471,12 @@ class Events implements Listener {
 							if (blockLocation.distance(hitBlock.getLocation()) <= radius) {
 								final Block block = world.getBlockAt(blockLocation);
 
-								if (block.getType() != Material.AIR) {
-									for (BlockFace face : faces) {
-										if (block.getRelative(face).getType() == Material.AIR) {
-											block.setType(Material.LEGACY_WOOL);
-
-											final BlockState state = block.getState();
-											final Wool wool = (Wool) state.getData();
-											wool.setColor(color);
-											state.setData(wool);
-											state.update();
+								if (block.getType() != Material.AIR &&
+								block.getType() != Material.CAVE_AIR) {
+									for (BlockFace face : main.faces) {
+										if (block.getRelative(face).getType() == Material.AIR ||
+											block.getRelative(face).getType() == Material.CAVE_AIR) {
+											block.setType(color);
 										}
 									}
 								}
