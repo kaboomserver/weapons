@@ -8,5 +8,4 @@ commands:
    weapons:
       aliases: weapon
       description: Gives you a weapon
-      usage: /weapons
       permission: weapons.command
