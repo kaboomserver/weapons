@@ -2,11 +2,14 @@ package pw.kaboom.weapons;
 
 import java.util.UUID;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -23,6 +26,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import org.bukkit.util.Vector;
+
+import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
 class WeaponMachineGun implements Listener {
 	static Main main;
@@ -87,6 +92,24 @@ class WeaponMachineGun implements Listener {
 				}.runTaskTimer(main, 0L, 1L);
 			}
 			event.setCancelled(true);
+		}
+	}
+
+	/* Make shooter invulnerable to weapon projectiles */
+	@EventHandler
+	void onProjectileCollide(ProjectileCollideEvent event) {
+		if (event.getEntityType() == EntityType.TIPPED_ARROW) {
+			final Projectile projectile = event.getEntity();
+
+			if ("WeaponMachineGunBullet".equals(projectile.getCustomName())) {
+				final Entity collidedWith = event.getCollidedWith();
+
+				if (collidedWith.getType() == EntityType.PLAYER &&
+					projectile.getShooter() instanceof Player &&
+					((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
+					event.setCancelled(true);
+				}
+			}
 		}
 	}
 

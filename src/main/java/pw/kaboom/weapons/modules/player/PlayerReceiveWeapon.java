@@ -13,14 +13,11 @@ class PlayerReceiveWeapon implements Listener {
 	void onInventoryClick(InventoryClickEvent event) {
 		if ("Weapons".equals(event.getView().getTitle())) {
 			final ItemStack item = event.getCurrentItem();
+			final Player player = (Player) event.getWhoClicked();
 
-			if (item.getItemMeta().hasDisplayName() == true) {
-				final Player player = (Player) event.getWhoClicked();
-
-				player.getInventory().addItem(item);
-				player.closeInventory();
-				player.sendMessage("You have received the " + item.getItemMeta().getDisplayName().toLowerCase() + "!");
-			}
+			player.getInventory().addItem(item);
+			player.closeInventory();
+			player.sendMessage("You have received the " + item.getItemMeta().getDisplayName().toLowerCase() + "!");
 		}
 	}
 }

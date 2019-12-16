@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 class PlayerUseWeapon implements Listener {
 	@EventHandler
 	void onPlayerInteract(PlayerInteractEvent event) {
-		if (event.hasItem() == true &&
-			event.getItem().getItemMeta().hasDisplayName() == true) {
+		if (event.hasItem() &&
+			event.getItem().getItemMeta().hasDisplayName()) {
 			final Action action = event.getAction();
 			final Material item = event.getMaterial();
 			final String name = event.getItem().getItemMeta().getDisplayName();
