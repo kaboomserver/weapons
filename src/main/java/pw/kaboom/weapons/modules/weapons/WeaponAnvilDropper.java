@@ -11,7 +11,7 @@ public final class WeaponAnvilDropper {
 
 	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
 		if (item == Material.ANVIL
-				&& "\\\\u00A7rAnvil Dropper".equals(name)) {
+				&& "§rAnvil Dropper".equals(name)) {
 			final int min = -2;
 			final int max = 2;
 

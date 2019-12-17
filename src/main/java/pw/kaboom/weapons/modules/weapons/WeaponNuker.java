@@ -15,7 +15,7 @@ public final class WeaponNuker {
 
 	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
 		if (item == Material.BLAZE_ROD
-				&& "\\\\u00A7rNuker".equals(name)) {
+				&& "§rNuker".equals(name)) {
 			final Player player = event.getPlayer();
 			final Location eyeLocation = player.getEyeLocation();
 			final Vector velocity = eyeLocation.getDirection().multiply(10);

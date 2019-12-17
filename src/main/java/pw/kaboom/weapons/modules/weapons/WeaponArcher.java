@@ -19,7 +19,7 @@ import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 public final class WeaponArcher implements Listener {
 	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
 		if (item == Material.SPECTRAL_ARROW
-				&& "\\\\u00A7rArcher".equals(name)) {
+				&& "§rArcher".equals(name)) {
 			final Player player = event.getPlayer();
 			final World world = player.getWorld();
 

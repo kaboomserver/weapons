@@ -13,7 +13,7 @@ public final class WeaponLightningStick {
 
 	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
 		if (item == Material.STICK
-				&& "\\\\u00A7rLightning Stick".equals(name)) {
+				&& "§rLightning Stick".equals(name)) {
 			final int maxDistance = 100;
 			final Location lookLocation = event.getPlayer().getTargetBlock((Set<Material>) null, maxDistance).getLocation();
 			final World world = event.getPlayer().getWorld();

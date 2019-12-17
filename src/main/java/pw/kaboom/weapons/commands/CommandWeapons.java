@@ -29,16 +29,16 @@ public final class CommandWeapons implements CommandExecutor {
 			final Player player = (Player) sender;
 			final Inventory inventory = Bukkit.createInventory(null, 18, "Weapons");
 
-			addWeapon(inventory, Material.ANVIL, "\\\\u00A7rAnvil Dropper");
-			addWeapon(inventory, Material.SPECTRAL_ARROW, "\\\\u00A7rArcher");
-			addWeapon(inventory, Material.FIRE_CHARGE, "\\\\u00A7rArmageddon");
-			addWeapon(inventory, Material.MAGMA_CREAM, "\\\\u00A7rBlobinator");
-			addWeapon(inventory, Material.EGG, "\\\\u00A7rGrenade");
-			addWeapon(inventory, Material.BLAZE_POWDER, "\\\\u00A7rLaser");
-			addWeapon(inventory, Material.STICK, "\\\\u00A7rLightning Stick");
-			addWeapon(inventory, Material.GOLDEN_HORSE_ARMOR, "\\\\u00A7rMachine Gun");
-			addWeapon(inventory, Material.BLAZE_ROD, "\\\\u00A7rNuker");
-			addWeapon(inventory, Material.IRON_HORSE_ARMOR, "\\\\u00A7rSniper");
+			addWeapon(inventory, Material.ANVIL, "§rAnvil Dropper");
+			addWeapon(inventory, Material.SPECTRAL_ARROW, "§rArcher");
+			addWeapon(inventory, Material.FIRE_CHARGE, "§rArmageddon");
+			addWeapon(inventory, Material.MAGMA_CREAM, "§rBlobinator");
+			addWeapon(inventory, Material.EGG, "§rGrenade");
+			addWeapon(inventory, Material.BLAZE_POWDER, "§rLaser");
+			addWeapon(inventory, Material.STICK, "§rLightning Stick");
+			addWeapon(inventory, Material.GOLDEN_HORSE_ARMOR, "§rMachine Gun");
+			addWeapon(inventory, Material.BLAZE_ROD, "§rNuker");
+			addWeapon(inventory, Material.IRON_HORSE_ARMOR, "§rSniper");
 			player.openInventory(inventory);
 		}
 		return true;
