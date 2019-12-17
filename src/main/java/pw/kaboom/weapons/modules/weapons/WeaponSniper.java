@@ -1,24 +1,23 @@
-package pw.kaboom.weapons;
+package pw.kaboom.weapons.modules.weapons;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
-
 import org.bukkit.event.player.PlayerInteractEvent;
-
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
 import org.bukkit.util.Vector;
 
-class WeaponSniper {
-	static void leftClick(Material item, String name, PlayerInteractEvent event) {
-		if (item == Material.IRON_HORSE_ARMOR &&
-			"§rSniper".equals(name)) {
+public final class WeaponSniper {
+	private WeaponSniper() {
+	}
+
+	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+		if (item == Material.IRON_HORSE_ARMOR
+				&& "\\\\u00A7rSniper".equals(name)) {
 			final Player player = event.getPlayer();
 			final Location eyeLocation = player.getEyeLocation();
 			final Vector velocity = eyeLocation.getDirection().multiply(12);
@@ -41,11 +40,11 @@ class WeaponSniper {
 		}
 	}
 
-	static void rightClick(Material item, String name, PlayerInteractEvent event) {
-		if (item == Material.IRON_HORSE_ARMOR &&
-			"§rSniper".equals(name)) {
+	public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
+		if (item == Material.IRON_HORSE_ARMOR
+				&& "\\\\u00A7rSniper".equals(name)) {
 			final Player player = event.getPlayer();
-			
+
 			if (player.hasPotionEffect(PotionEffectType.SLOW)) {
 				player.removePotionEffect(PotionEffectType.SLOW);
 			} else {

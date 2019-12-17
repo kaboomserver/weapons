@@ -1,95 +1,84 @@
-package pw.kaboom.weapons;
+package pw.kaboom.weapons.modules.weapons;
 
+import java.util.HashSet;
 import java.util.UUID;
 
-import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TippedArrow;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
 import org.bukkit.scheduler.BukkitRunnable;
-
 import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+import pw.kaboom.weapons.Main;
 
-class WeaponMachineGun implements Listener {
-	static Main main;
-	WeaponMachineGun(Main main) {
-		this.main = main;
-	}
+public final class WeaponMachineGun implements Listener {
+	private static HashSet<UUID> machineGunActive = new HashSet<>();
 
-	static void rightClick(Material item, String name, PlayerInteractEvent event) {
-		if (item == Material.GOLDEN_HORSE_ARMOR &&
-			"§rMachine Gun".equals(name)) {
+	public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
+		if (item == Material.GOLDEN_HORSE_ARMOR
+				&& "\\\\u00A7rMachine Gun".equals(name)) {
 			final UUID playerUUID = event.getPlayer().getUniqueId();
 
-			if (!main.machineGunActive.contains(playerUUID)) {
-				main.machineGunActive.add(playerUUID);
-				final PlayerInteractEvent eventMachine = event;
+			if (!machineGunActive.contains(playerUUID)) {
+				machineGunActive.add(playerUUID);
+				final int maxBulletCount = 20;
 
-				new BukkitRunnable() {
-					int i = 0;
-					public void run() {
-						i++;
+				for (int i = 0; i < maxBulletCount; i++) {
+					new BukkitRunnable() {
+						public void run() {
+							final Player player = event.getPlayer();
+							final Location eyeLocation = player.getEyeLocation();
+							final World world = player.getWorld();
+							final Vector velocity = eyeLocation.getDirection().multiply(12);
 
-						final Player player = eventMachine.getPlayer();
-						final Location eyeLocation = player.getEyeLocation();
-						final World world = player.getWorld();
-						final Vector velocity = eyeLocation.getDirection().multiply(12);
+							final TippedArrow arrow = player.launchProjectile(TippedArrow.class);
 
-						final TippedArrow arrow = player.launchProjectile(TippedArrow.class);
-
-						final int duration = 90000;
-						final int amplifier = 3;
-						final boolean ambient = true;
-						final boolean particles = false;
-
-						final PotionEffect harm = new PotionEffect(
-							PotionEffectType.HARM,
-							duration,
-							amplifier,
-							ambient,
-							particles
-						);
-
-						arrow.setCustomName("WeaponMachineGunBullet");
-						arrow.addCustomEffect(harm, true);
-						arrow.setShooter(player);
-						arrow.setVelocity(velocity);
-
-						final float volume = 1.0F;
-						final float pitch = 63.0F;
-
-						world.playSound(
-							eyeLocation,
-							Sound.ENTITY_GENERIC_EXPLODE,
-							volume,
-							pitch
-						);
-
-						if (i == 20) {
-							main.machineGunActive.remove(playerUUID);
-							cancel();
+							final int duration = 90000;
+							final int amplifier = 3;
+							final boolean ambient = true;
+							final boolean particles = false;
+	
+							final PotionEffect harm = new PotionEffect(
+								PotionEffectType.HARM,
+								duration,
+								amplifier,
+								ambient,
+								particles
+							);
+	
+							arrow.setCustomName("WeaponMachineGunBullet");
+							arrow.addCustomEffect(harm, true);
+							arrow.setShooter(player);
+							arrow.setVelocity(velocity);
+	
+							final float volume = 1.0F;
+							final float pitch = 63.0F;
+	
+							world.playSound(
+								eyeLocation,
+								Sound.ENTITY_GENERIC_EXPLODE,
+								volume,
+								pitch
+							);
 						}
-					}
-				}.runTaskTimer(main, 0L, 1L);
+					}.runTask(JavaPlugin.getPlugin(Main.class));
+				}
+				
+				machineGunActive.remove(playerUUID);
 			}
 			event.setCancelled(true);
 		}
@@ -97,16 +86,16 @@ class WeaponMachineGun implements Listener {
 
 	/* Make shooter invulnerable to weapon projectiles */
 	@EventHandler
-	void onProjectileCollide(ProjectileCollideEvent event) {
+	private void onProjectileCollide(final ProjectileCollideEvent event) {
 		if (event.getEntityType() == EntityType.TIPPED_ARROW) {
 			final Projectile projectile = event.getEntity();
 
 			if ("WeaponMachineGunBullet".equals(projectile.getCustomName())) {
 				final Entity collidedWith = event.getCollidedWith();
 
-				if (collidedWith.getType() == EntityType.PLAYER &&
-					projectile.getShooter() instanceof Player &&
-					((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
+				if (collidedWith.getType() == EntityType.PLAYER
+						&& projectile.getShooter() instanceof Player
+						&& ((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
 					event.setCancelled(true);
 				}
 			}
@@ -114,7 +103,7 @@ class WeaponMachineGun implements Listener {
 	}
 
 	@EventHandler
-	void onProjectileHit(ProjectileHitEvent event) {
+	private void onProjectileHit(final ProjectileHitEvent event) {
 		if (event.getEntityType() == EntityType.TIPPED_ARROW) {
 			final Projectile projectile = event.getEntity();
 

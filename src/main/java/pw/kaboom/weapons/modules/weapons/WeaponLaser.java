@@ -1,8 +1,6 @@
-package pw.kaboom.weapons;
+package pw.kaboom.weapons.modules.weapons;
 
 import java.util.Random;
-import java.util.Set;
-
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,16 +9,18 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 
 import org.bukkit.entity.Player;
-
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
-class WeaponLaser {
-	static void rightClick(Material item, String name, PlayerInteractEvent event) {
-		if (item == Material.BLAZE_POWDER &&
-			"§rLaser".equals(name)) {
+public final class WeaponLaser {
+	private WeaponLaser() {
+	}
+
+	public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
+		if (item == Material.BLAZE_POWDER
+				&& "\\\\u00A7rLaser".equals(name)) {
 			final Player player = event.getPlayer();
 			final Location eyeLocation = player.getEyeLocation();
 			final Vector direction = eyeLocation.getDirection();
@@ -64,13 +64,13 @@ class WeaponLaser {
 				yOffset,
 				distance
 			);
-	
+
 			while (blockIterator.hasNext()) {
 				blockIterator.next().breakNaturally();
 			}
 
-			float volume = 0.8F;
-			float pitch = 63.0F;
+			final float volume = 0.8F;
+			final float pitch = 63.0F;
 
 			world.playSound(
 				eyeLocation,
@@ -79,14 +79,14 @@ class WeaponLaser {
 				pitch
 			);
 
-			volume = 1.0F;
-			pitch = 20.0F;
+			final float volume2 = 1.0F;
+			final float pitch2 = 20.0F;
 
 			world.playSound(
 				eyeLocation,
 				Sound.ENTITY_FIREWORK_ROCKET_BLAST,
-				volume,
-				pitch
+				volume2,
+				pitch2
 			);
 			event.setCancelled(true);
 		}

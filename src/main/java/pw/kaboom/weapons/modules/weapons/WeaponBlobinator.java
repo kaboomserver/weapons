@@ -1,4 +1,4 @@
-package pw.kaboom.weapons;
+package pw.kaboom.weapons.modules.weapons;
 
 import java.util.Random;
 
@@ -6,33 +6,25 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-
 import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+import pw.kaboom.weapons.Main;
 
-class WeaponBlobinator implements Listener {
-	Main main;
-	WeaponBlobinator(Main main) {
-		this.main = main;
-	}
-
-	static void leftClick(Material item, String name, PlayerInteractEvent event) {
-		if (item == Material.MAGMA_CREAM &&
-			"§rBlobinator".equals(name)) {
+public final class WeaponBlobinator implements Listener {
+	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+		if (item == Material.MAGMA_CREAM
+				&& "\\\\u00A7rBlobinator".equals(name)) {
 			final Player player = event.getPlayer();
 			final Location eyeLocation = player.getEyeLocation();
 			final Vector velocity = eyeLocation.getDirection().multiply(8);
@@ -56,17 +48,17 @@ class WeaponBlobinator implements Listener {
 		}
 	}
 
-	private void createBlobSplash(World world, int x, int y, int z, int radius, Block hitBlock, Material color) {
+	private void createBlobSplash(final World world, final int x, final int y, final int z, final int radius, final Block hitBlock, final Material color) {
 		final Location blockLocation = hitBlock.getLocation().add(x, y, z);
 
 		if (blockLocation.distance(hitBlock.getLocation()) <= radius) {
 			final Block block = world.getBlockAt(blockLocation);
 
-			if (block.getType() != Material.AIR &&
-				block.getType() != Material.CAVE_AIR) {
-				for (BlockFace face : main.faces) {
-					if (block.getRelative(face).getType() == Material.AIR ||
-						block.getRelative(face).getType() == Material.CAVE_AIR) {
+			if (block.getType() != Material.AIR
+					&& block.getType() != Material.CAVE_AIR) {
+				for (BlockFace face : Main.getBlockFaces()) {
+					if (block.getRelative(face).getType() == Material.AIR
+							|| block.getRelative(face).getType() == Material.CAVE_AIR) {
 						block.setType(color);
 					}
 				}
@@ -75,7 +67,7 @@ class WeaponBlobinator implements Listener {
 	}
 
 	@EventHandler
-	void onProjectileCollide(ProjectileCollideEvent event) {
+	private void onProjectileCollide(final ProjectileCollideEvent event) {
 		if (event.getEntityType() == EntityType.SNOWBALL) {
 			final Projectile projectile = event.getEntity();
 
@@ -86,17 +78,17 @@ class WeaponBlobinator implements Listener {
 	}
 
 	@EventHandler
-	void onProjectileHit(ProjectileHitEvent event) {
+	private void onProjectileHit(final ProjectileHitEvent event) {
 		if (event.getEntityType() == EntityType.SNOWBALL) {
 			final Block hitBlock = event.getHitBlock();
 			final Projectile projectile = event.getEntity();
 
-			if (hitBlock != null &&
-				"WeaponBlobinatorBall".equals(projectile.getCustomName())) {
+			if (hitBlock != null
+					&& "WeaponBlobinatorBall".equals(projectile.getCustomName())) {
 				final int radius = 4;
 				final World world = projectile.getWorld();
 				final Random random = new Random();
-				final Material color = main.colors.get(random.nextInt(main.colors.size()));
+				final Material color = Main.getColors().get(random.nextInt(Main.getColors().size()));
 
 				for (int x = -radius; x < radius; x++) {
 					for (int y = -radius; y < radius; y++) {

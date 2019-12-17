@@ -1,32 +1,31 @@
-package pw.kaboom.weapons;
+package pw.kaboom.weapons.modules.weapons;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SpectralArrow;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-
 import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
-class WeaponArcher implements Listener {
-	static void leftClick(Material item, String name, PlayerInteractEvent event) {
-		if (item == Material.SPECTRAL_ARROW &&
-			"§rArcher".equals(name)) {
+public final class WeaponArcher implements Listener {
+	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+		if (item == Material.SPECTRAL_ARROW
+				&& "\\\\u00A7rArcher".equals(name)) {
 			final Player player = event.getPlayer();
 			final World world = player.getWorld();
 
-			for (int i = 0; i <= 20; i++) {
+			final int maxArrowCount = 20;
+
+			for (int i = 0; i <= maxArrowCount; i++) {
 				final double randomX = (Math.random() * ((15 + 15) + 1)) - 15;
 				final double randomY = (Math.random() * ((15 + 15) + 1)) - 15;
 				final double randomZ = (Math.random() * ((15 + 15) + 1)) - 15;
@@ -61,16 +60,16 @@ class WeaponArcher implements Listener {
 
 	/* Make shooter invulnerable to weapon projectiles */
 	@EventHandler
-	void onProjectileCollide(ProjectileCollideEvent event) {
+	private void onProjectileCollide(final ProjectileCollideEvent event) {
 		if (event.getEntityType() == EntityType.SPECTRAL_ARROW) {
 			final Projectile projectile = event.getEntity();
 
 			if ("WeaponArcherArrow".equals(projectile.getCustomName())) {
 				final Entity collidedWith = event.getCollidedWith();
 
-				if (collidedWith.getType() == EntityType.PLAYER &&
-					projectile.getShooter() instanceof Player &&
-					((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
+				if (collidedWith.getType() == EntityType.PLAYER
+						&& projectile.getShooter() instanceof Player
+						&& ((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
 					event.setCancelled(true);
 				}
 			}

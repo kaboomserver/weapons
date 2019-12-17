@@ -1,18 +1,21 @@
-package pw.kaboom.weapons;
+package pw.kaboom.weapons.modules.weapons;
 
 import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-
 import org.bukkit.event.player.PlayerInteractEvent;
 
-class WeaponLightningStick {
-	static void leftClick(Material item, String name, PlayerInteractEvent event) {
-		if (item == Material.STICK &&
-			"§rLightning Stick".equals(name)) {
-			final Location lookLocation = event.getPlayer().getTargetBlock((Set<Material>) null, 100).getLocation();
+public final class WeaponLightningStick {
+	private WeaponLightningStick() {
+	}
+
+	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+		if (item == Material.STICK
+				&& "\\\\u00A7rLightning Stick".equals(name)) {
+			final int maxDistance = 100;
+			final Location lookLocation = event.getPlayer().getTargetBlock((Set<Material>) null, maxDistance).getLocation();
 			final World world = event.getPlayer().getWorld();
 
 			world.strikeLightning(lookLocation);

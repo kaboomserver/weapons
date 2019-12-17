@@ -1,43 +1,45 @@
-package pw.kaboom.weapons;
+package pw.kaboom.weapons.modules.weapons;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
-
 import org.bukkit.event.player.PlayerInteractEvent;
-
 import org.bukkit.util.Vector;
 
-class WeaponNuker {
-	static void leftClick(Material item, String name, PlayerInteractEvent event) {
-		if (item == Material.BLAZE_ROD &&
-			"§rNuker".equals(name)) {
+public final class WeaponNuker {
+	private WeaponNuker() {
+	}
+
+	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+		if (item == Material.BLAZE_ROD
+				&& "\\\\u00A7rNuker".equals(name)) {
 			final Player player = event.getPlayer();
 			final Location eyeLocation = player.getEyeLocation();
 			final Vector velocity = eyeLocation.getDirection().multiply(10);
+			final int yield = 8;
 
 			final Fireball fireball = player.launchProjectile(Fireball.class);
 			fireball.setShooter(player);
 			fireball.setVelocity(velocity);
-			fireball.setYield(8);
+			fireball.setYield(yield);
 
 			final World world = player.getWorld();
-			final float volume1 = 0.9F;
-			final float pitch1 = 1.5F;
-			final float volume2 = 0.8F;
-			final float pitch2 = 2.0F;
+			final float volume = 0.9F;
+			final float pitch = 1.5F;
 
 			world.playSound(
 				eyeLocation,
 				Sound.ENTITY_GHAST_SHOOT,
-				volume1,
-				pitch1
+				volume,
+				pitch
 			);
-			
+
+			final float volume2 = 0.8F;
+			final float pitch2 = 2.0F;
+
 			world.playSound(
 				eyeLocation,
 				Sound.ENTITY_BAT_TAKEOFF,
