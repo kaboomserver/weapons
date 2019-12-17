@@ -15,8 +15,8 @@ import pw.kaboom.weapons.modules.player.PlayerUseWeapon;
 import pw.kaboom.weapons.modules.weapons.*;
 
 public final class Main extends JavaPlugin {
-	private static HashSet<BlockFace> blockFaces = new HashSet<>();
-	private static List<Material> colors = new ArrayList<>();
+	private static HashSet<BlockFace> blockFaces = new HashSet<BlockFace>();
+	private static List<Material> colors = new ArrayList<Material>();
 
 	@Override
 	public void onLoad() {

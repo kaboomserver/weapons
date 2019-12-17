@@ -27,7 +27,7 @@ import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import pw.kaboom.weapons.Main;
 
 public final class WeaponMachineGun implements Listener {
-	private static HashSet<UUID> machineGunActive = new HashSet<>();
+	private static HashSet<UUID> machineGunActive = new HashSet<UUID>();
 
 	public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
 		if (item == Material.GOLDEN_HORSE_ARMOR
