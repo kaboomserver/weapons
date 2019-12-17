@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+
 import pw.kaboom.weapons.Main;
 
 public final class WeaponBlobinator implements Listener {

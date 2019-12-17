@@ -18,6 +18,7 @@ public final class Main extends JavaPlugin {
 	private static HashSet<BlockFace> blockFaces = new HashSet<>();
 	private static List<Material> colors = new ArrayList<>();
 
+	@Override
 	public void onLoad() {
 		/* Fill lists */
 		Collections.addAll(
@@ -51,6 +52,7 @@ public final class Main extends JavaPlugin {
 		);
 	}
 
+	@Override
 	public void onEnable() {
 		/* Commands */
 		this.getCommand("weapons").setExecutor(new CommandWeapons());

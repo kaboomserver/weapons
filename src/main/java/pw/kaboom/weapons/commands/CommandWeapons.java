@@ -21,6 +21,7 @@ public final class CommandWeapons implements CommandExecutor {
 		inventory.addItem(item);
 	}
 
+	@Override
 	public boolean onCommand(final CommandSender sender, final Command cmd, final String label, final String[] args) {
 		if (sender instanceof ConsoleCommandSender) {
 			sender.sendMessage("Command has to be run by a player");
