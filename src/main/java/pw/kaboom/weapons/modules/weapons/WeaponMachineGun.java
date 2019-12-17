@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+
 import pw.kaboom.weapons.Main;
 
 public final class WeaponMachineGun implements Listener {
@@ -39,6 +40,7 @@ public final class WeaponMachineGun implements Listener {
 
 				for (int i = 0; i < maxBulletCount; i++) {
 					new BukkitRunnable() {
+						@Override
 						public void run() {
 							final Player player = event.getPlayer();
 							final Location eyeLocation = player.getEyeLocation();
@@ -51,7 +53,7 @@ public final class WeaponMachineGun implements Listener {
 							final int amplifier = 3;
 							final boolean ambient = true;
 							final boolean particles = false;
-	
+
 							final PotionEffect harm = new PotionEffect(
 								PotionEffectType.HARM,
 								duration,
@@ -59,15 +61,15 @@ public final class WeaponMachineGun implements Listener {
 								ambient,
 								particles
 							);
-	
+
 							arrow.setCustomName("WeaponMachineGunBullet");
 							arrow.addCustomEffect(harm, true);
 							arrow.setShooter(player);
 							arrow.setVelocity(velocity);
-	
+
 							final float volume = 1.0F;
 							final float pitch = 63.0F;
-	
+
 							world.playSound(
 								eyeLocation,
 								Sound.ENTITY_GENERIC_EXPLODE,
@@ -77,7 +79,7 @@ public final class WeaponMachineGun implements Listener {
 						}
 					}.runTask(JavaPlugin.getPlugin(Main.class));
 				}
-				
+
 				machineGunActive.remove(playerUUID);
 			}
 			event.setCancelled(true);
