@@ -6,7 +6,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import pw.kaboom.weapons.modules.weapons.*;
+import pw.kaboom.weapons.modules.weapons.WeaponAnvilDropper;
+import pw.kaboom.weapons.modules.weapons.WeaponArcher;
+import pw.kaboom.weapons.modules.weapons.WeaponArmageddon;
+import pw.kaboom.weapons.modules.weapons.WeaponBlobinator;
+import pw.kaboom.weapons.modules.weapons.WeaponGrenade;
+import pw.kaboom.weapons.modules.weapons.WeaponLaser;
+import pw.kaboom.weapons.modules.weapons.WeaponLightningStick;
+import pw.kaboom.weapons.modules.weapons.WeaponMachineGun;
+import pw.kaboom.weapons.modules.weapons.WeaponNuker;
+import pw.kaboom.weapons.modules.weapons.WeaponSniper;
 
 public final class PlayerUseWeapon implements Listener {
 	@EventHandler

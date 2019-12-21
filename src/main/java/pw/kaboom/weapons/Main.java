@@ -12,7 +12,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pw.kaboom.weapons.commands.CommandWeapons;
 import pw.kaboom.weapons.modules.player.PlayerReceiveWeapon;
 import pw.kaboom.weapons.modules.player.PlayerUseWeapon;
-import pw.kaboom.weapons.modules.weapons.*;
+import pw.kaboom.weapons.modules.weapons.WeaponArcher;
+import pw.kaboom.weapons.modules.weapons.WeaponArmageddon;
+import pw.kaboom.weapons.modules.weapons.WeaponBlobinator;
+import pw.kaboom.weapons.modules.weapons.WeaponGrenade;
+import pw.kaboom.weapons.modules.weapons.WeaponMachineGun;
 
 public final class Main extends JavaPlugin {
 	private static HashSet<BlockFace> blockFaces = new HashSet<BlockFace>();
