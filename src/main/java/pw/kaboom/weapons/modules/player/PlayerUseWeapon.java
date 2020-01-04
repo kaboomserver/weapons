@@ -24,7 +24,12 @@ public final class PlayerUseWeapon implements Listener {
 				&& event.getItem().getItemMeta().hasDisplayName()) {
 			final Action action = event.getAction();
 			final Material item = event.getMaterial();
-			final String name = event.getItem().getItemMeta().getDisplayName();
+			String name = "";
+
+			try {
+				name = event.getItem().getItemMeta().getDisplayName();
+			} catch (Exception ignored) {
+			}
 
 			if (action == Action.LEFT_CLICK_AIR
 					|| action == Action.LEFT_CLICK_BLOCK) {
