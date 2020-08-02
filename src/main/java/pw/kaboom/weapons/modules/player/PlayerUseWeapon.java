@@ -20,16 +20,17 @@ import pw.kaboom.weapons.modules.weapons.WeaponSniper;
 public final class PlayerUseWeapon implements Listener {
 	@EventHandler
 	void onPlayerInteract(final PlayerInteractEvent event) {
-		if (event.hasItem()
-				&& event.getItem().getItemMeta().hasDisplayName()) {
-			final Action action = event.getAction();
-			final Material item = event.getMaterial();
+		if (event.hasItem()) {
 			String name = "";
 
 			try {
 				name = event.getItem().getItemMeta().getDisplayName();
 			} catch (Exception ignored) {
+				return;
 			}
+
+			final Action action = event.getAction();
+			final Material item = event.getMaterial();
 
 			if (action == Action.LEFT_CLICK_AIR
 					|| action == Action.LEFT_CLICK_BLOCK) {
