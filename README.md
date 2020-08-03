@@ -8,7 +8,7 @@ The plugin is created for the Kaboom server.
 
 | Command | Alias | Permission | Description |
 | ------- | ----- | ---------- | ----------- |
-|/commandspy | /c, /cs, /cspy | commandspy.command | Allows you to spy on players' commands|
+|/weapons | /weapon | weapons.command | Gives you a weapon|
 
 ## Compiling
 
