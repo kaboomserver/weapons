@@ -2,6 +2,7 @@ package pw.kaboom.weapons.modules.player;
 
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -20,7 +21,8 @@ import pw.kaboom.weapons.modules.weapons.WeaponSniper;
 public final class PlayerUseWeapon implements Listener {
 	@EventHandler
 	void onPlayerInteract(final PlayerInteractEvent event) {
-		if (event.isCancelled() || !event.hasItem()) {
+		if ((event.useInteractedBlock() == Result.DENY && event.useItemInHand() == Result.DENY)
+				|| !event.hasItem()) {
 			return;
 		}
 
