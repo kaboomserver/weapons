@@ -20,34 +20,36 @@ import pw.kaboom.weapons.modules.weapons.WeaponSniper;
 public final class PlayerUseWeapon implements Listener {
 	@EventHandler
 	void onPlayerInteract(final PlayerInteractEvent event) {
-		if (event.hasItem()) {
-			String name = "";
+		if (event.isCancelled() || !event.hasItem()) {
+			return;
+		}
 
-			try {
-				name = event.getItem().getItemMeta().getDisplayName();
-			} catch (Exception ignored) {
-				return;
-			}
+		String name = "";
 
-			final Action action = event.getAction();
-			final Material item = event.getMaterial();
+		try {
+			name = event.getItem().getItemMeta().getDisplayName();
+		} catch (Exception ignored) {
+			return;
+		}
 
-			if (action == Action.LEFT_CLICK_AIR
-					|| action == Action.LEFT_CLICK_BLOCK) {
-				WeaponAnvilDropper.leftClick(item, name, event);
-				WeaponArcher.leftClick(item, name, event);
-				WeaponArmageddon.leftClick(item, name, event);
-				WeaponBlobinator.leftClick(item, name, event);
-				WeaponLightningStick.leftClick(item, name, event);
-				WeaponNuker.leftClick(item, name, event);
-				WeaponSniper.leftClick(item, name, event);
-			} else if (action == Action.RIGHT_CLICK_AIR
-					|| action == Action.RIGHT_CLICK_BLOCK) {
-				WeaponGrenade.rightClick(item, name, event);
-				WeaponLaser.rightClick(item, name, event);
-				WeaponMachineGun.rightClick(item, name, event);
-				WeaponSniper.rightClick(item, name, event);
-			}
+		final Action action = event.getAction();
+		final Material item = event.getMaterial();
+
+		if (action == Action.LEFT_CLICK_AIR
+				|| action == Action.LEFT_CLICK_BLOCK) {
+			WeaponAnvilDropper.leftClick(item, name, event);
+			WeaponArcher.leftClick(item, name, event);
+			WeaponArmageddon.leftClick(item, name, event);
+			WeaponBlobinator.leftClick(item, name, event);
+			WeaponLightningStick.leftClick(item, name, event);
+			WeaponNuker.leftClick(item, name, event);
+			WeaponSniper.leftClick(item, name, event);
+		} else if (action == Action.RIGHT_CLICK_AIR
+				|| action == Action.RIGHT_CLICK_BLOCK) {
+			WeaponGrenade.rightClick(item, name, event);
+			WeaponLaser.rightClick(item, name, event);
+			WeaponMachineGun.rightClick(item, name, event);
+			WeaponSniper.rightClick(item, name, event);
 		}
 	}
 }
