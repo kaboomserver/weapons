@@ -32,7 +32,7 @@ public final class WeaponMachineGun implements Listener {
 
 	public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
 		if (item == Material.GOLDEN_HORSE_ARMOR
-				&& "§rMachine Gun".equals(name)) {
+				&& ("§rMachine Gun".equals(name) || "Machine Gun".equals(name))) {
 			final UUID playerUUID = event.getPlayer().getUniqueId();
 
 			if (!machineGunActive.contains(playerUUID)) {

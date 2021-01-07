@@ -25,7 +25,7 @@ import pw.kaboom.weapons.Main;
 public final class WeaponBlobinator implements Listener {
 	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
 		if (item == Material.MAGMA_CREAM
-				&& "§rBlobinator".equals(name)) {
+				&& ("§rBlobinator".equals(name) || "Blobinator".equals(name))) {
 			final Player player = event.getPlayer();
 			final Location eyeLocation = player.getEyeLocation();
 			final Vector velocity = eyeLocation.getDirection().multiply(8);

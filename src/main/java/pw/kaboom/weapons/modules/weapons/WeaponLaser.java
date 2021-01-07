@@ -19,7 +19,7 @@ public final class WeaponLaser {
 
 	public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
 		if (item == Material.BLAZE_POWDER
-				&& "§rLaser".equals(name)) {
+				&& ("§rLaser".equals(name) || "Laser".equals(name))) {
 			final Player player = event.getPlayer();
 			final Location eyeLocation = player.getEyeLocation();
 			final Vector direction = eyeLocation.getDirection();
