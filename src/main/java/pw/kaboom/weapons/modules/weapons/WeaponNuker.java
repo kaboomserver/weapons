@@ -13,7 +13,8 @@ public final class WeaponNuker {
     private WeaponNuker() {
     }
 
-    public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void leftClick(final Material item, final String name,
+                                 final PlayerInteractEvent event) {
         if (item == Material.BLAZE_ROD
                 && ("§rNuker".equals(name) || "Nuker".equals(name))) {
             final Player player = event.getPlayer();

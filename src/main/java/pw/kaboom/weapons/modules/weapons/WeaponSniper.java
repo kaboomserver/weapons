@@ -15,7 +15,8 @@ public final class WeaponSniper {
     private WeaponSniper() {
     }
 
-    public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void leftClick(final Material item, final String name,
+                                 final PlayerInteractEvent event) {
         if (item == Material.IRON_HORSE_ARMOR
                 && ("§rSniper".equals(name) || "Sniper".equals(name))) {
             final Player player = event.getPlayer();
@@ -40,7 +41,8 @@ public final class WeaponSniper {
         }
     }
 
-    public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void rightClick(final Material item, final String name,
+                                  final PlayerInteractEvent event) {
         if (item == Material.IRON_HORSE_ARMOR
                 && ("§rSniper".equals(name) || "Sniper".equals(name))) {
             final Player player = event.getPlayer();

@@ -17,7 +17,8 @@ import org.bukkit.util.Vector;
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
 public final class WeaponArmageddon implements Listener {
-    public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void leftClick(final Material item, final String name,
+                                 final PlayerInteractEvent event) {
         if (item == Material.FIRE_CHARGE
                 && ("§rArmageddon".equals(name) || "Armageddon".equals(name))) {
             final Player player = event.getPlayer();
@@ -62,7 +63,8 @@ public final class WeaponArmageddon implements Listener {
         }
     }
 
-    /* Make shooter invulnerable to weapon projectiles, and prevent charges from colliding with each other */
+    /* Make shooter invulnerable to weapon projectiles, and prevent charges from
+    colliding with each other */
     @EventHandler
     private void onProjectileCollide(final ProjectileCollideEvent event) {
         if (event.getEntityType() == EntityType.FIREBALL) {
@@ -73,7 +75,8 @@ public final class WeaponArmageddon implements Listener {
 
                 if ((collidedWith.getType() == EntityType.PLAYER
                         && projectile.getShooter() instanceof Player
-                        && ((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId()))
+                        && ((Player) projectile.getShooter()).getUniqueId().equals(
+                            collidedWith.getUniqueId()))
                         || collidedWith.getType() == EntityType.FIREBALL) {
                     event.setCancelled(true);
                 }

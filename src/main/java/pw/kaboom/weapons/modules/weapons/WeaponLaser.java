@@ -17,7 +17,8 @@ public final class WeaponLaser {
     private WeaponLaser() {
     }
 
-    public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void rightClick(final Material item, final String name,
+                                  final PlayerInteractEvent event) {
         if (item == Material.BLAZE_POWDER
                 && ("§rLaser".equals(name) || "Laser".equals(name))) {
             final Player player = event.getPlayer();

@@ -14,11 +14,12 @@ public final class PlayerReceiveWeapon implements Listener {
         }
 
         final ItemStack item = event.getCurrentItem();
+        final String weaponName = item.getItemMeta().getDisplayName().toLowerCase();
         final Player player = (Player) event.getWhoClicked();
 
         player.getInventory().addItem(item);
         player.closeInventory();
-        player.sendMessage("You have received the " + item.getItemMeta().getDisplayName().toLowerCase() + "!");
+        player.sendMessage("You have received the " + weaponName + "!");
     }
 }
 

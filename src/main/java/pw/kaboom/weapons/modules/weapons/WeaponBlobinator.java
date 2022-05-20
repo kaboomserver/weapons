@@ -1,6 +1,6 @@
 package pw.kaboom.weapons.modules.weapons;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,7 +23,8 @@ import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import pw.kaboom.weapons.Main;
 
 public final class WeaponBlobinator implements Listener {
-    public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void leftClick(final Material item, final String name,
+                                 final PlayerInteractEvent event) {
         if (item == Material.MAGMA_CREAM
                 && ("§rBlobinator".equals(name) || "Blobinator".equals(name))) {
             final Player player = event.getPlayer();
@@ -49,7 +50,8 @@ public final class WeaponBlobinator implements Listener {
         }
     }
 
-    private void createBlobSplash(final World world, final int x, final int y, final int z, final int radius, final Block hitBlock, final Material color) {
+    private void createBlobSplash(final World world, final int x, final int y, final int z,
+                                  final int radius, final Block hitBlock, final Material color) {
         final Location blockLocation = hitBlock.getLocation().add(x, y, z);
 
         if (blockLocation.distance(hitBlock.getLocation()) <= radius) {
@@ -88,8 +90,8 @@ public final class WeaponBlobinator implements Listener {
                     && "WeaponBlobinatorBall".equals(projectile.getCustomName())) {
                 final int radius = 4;
                 final World world = projectile.getWorld();
-                final Random random = new Random();
-                final Material color = Main.getColors().get(random.nextInt(Main.getColors().size()));
+                final Material color = Main.getColors().get(
+                    ThreadLocalRandom.current().nextInt(Main.getColors().size()));
 
                 for (int x = -radius; x < radius; x++) {
                     for (int y = -radius; y < radius; y++) {

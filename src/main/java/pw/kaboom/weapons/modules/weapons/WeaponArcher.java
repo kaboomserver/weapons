@@ -17,7 +17,8 @@ import org.bukkit.util.Vector;
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
 public final class WeaponArcher implements Listener {
-    public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void leftClick(final Material item, final String name,
+                                 final PlayerInteractEvent event) {
         if (item == Material.SPECTRAL_ARROW
                 && ("§rArcher".equals(name) || "Archer".equals(name))) {
             final Player player = event.getPlayer();
@@ -69,7 +70,8 @@ public final class WeaponArcher implements Listener {
 
                 if (collidedWith.getType() == EntityType.PLAYER
                         && projectile.getShooter() instanceof Player
-                        && ((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
+                        && ((Player) projectile.getShooter()).getUniqueId().equals(
+                            collidedWith.getUniqueId())) {
                     event.setCancelled(true);
                 }
             }

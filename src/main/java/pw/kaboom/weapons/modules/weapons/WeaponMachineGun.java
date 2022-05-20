@@ -30,7 +30,8 @@ import pw.kaboom.weapons.Main;
 public final class WeaponMachineGun implements Listener {
     private static HashSet<UUID> machineGunActive = new HashSet<UUID>();
 
-    public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void rightClick(final Material item, final String name,
+                                  final PlayerInteractEvent event) {
         if (item == Material.GOLDEN_HORSE_ARMOR
                 && ("§rMachine Gun".equals(name) || "Machine Gun".equals(name))) {
             final UUID playerUUID = event.getPlayer().getUniqueId();
@@ -90,7 +91,8 @@ public final class WeaponMachineGun implements Listener {
 
                 if (collidedWith.getType() == EntityType.PLAYER
                         && projectile.getShooter() instanceof Player
-                        && ((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
+                        && ((Player) projectile.getShooter()).getUniqueId().equals(
+                            collidedWith.getUniqueId())) {
                     event.setCancelled(true);
                 } else if (collidedWith instanceof LivingEntity) {
                     final int duration = 90000;

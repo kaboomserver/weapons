@@ -9,7 +9,8 @@ public final class WeaponAnvilDropper {
     private WeaponAnvilDropper() {
     }
 
-    public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void leftClick(final Material item, final String name,
+                                 final PlayerInteractEvent event) {
         if (item == Material.ANVIL
                 && ("§rAnvil Dropper".equals(name) || "Anvil Dropper".equals(name))) {
             final int min = -2;
@@ -17,7 +18,8 @@ public final class WeaponAnvilDropper {
 
             for (int x = min; x <= max; x++) {
                 for (int z = min; z <= max; z++) {
-                    final Location blockLocation = event.getPlayer().getLocation().subtract(x, 0, z);
+                    final Location blockLocation = event.getPlayer().getLocation()
+                        .subtract(x, 0, z);
                     final World world = event.getPlayer().getWorld();
 
                     world.spawnFallingBlock(

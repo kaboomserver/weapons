@@ -15,7 +15,8 @@ import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class WeaponGrenade implements Listener {
-    public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
+    public static void rightClick(final Material item, final String name,
+                                  final PlayerInteractEvent event) {
         if (item == Material.EGG
                 && ("§rGrenade".equals(name) || "Grenade".equals(name))) {
             event.setCancelled(true);
