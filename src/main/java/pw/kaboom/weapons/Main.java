@@ -19,65 +19,65 @@ import pw.kaboom.weapons.modules.weapons.WeaponGrenade;
 import pw.kaboom.weapons.modules.weapons.WeaponMachineGun;
 
 public final class Main extends JavaPlugin {
-	private static HashSet<BlockFace> blockFaces = new HashSet<BlockFace>();
-	private static List<Material> colors = new ArrayList<Material>();
+    private static HashSet<BlockFace> blockFaces = new HashSet<BlockFace>();
+    private static List<Material> colors = new ArrayList<Material>();
 
-	@Override
-	public void onLoad() {
-		/* Fill lists */
-		Collections.addAll(
-			blockFaces,
-			BlockFace.NORTH,
-			BlockFace.SOUTH,
-			BlockFace.WEST,
-			BlockFace.EAST,
-			BlockFace.UP,
-			BlockFace.DOWN
-		);
+    @Override
+    public void onLoad() {
+        /* Fill lists */
+        Collections.addAll(
+            blockFaces,
+            BlockFace.NORTH,
+            BlockFace.SOUTH,
+            BlockFace.WEST,
+            BlockFace.EAST,
+            BlockFace.UP,
+            BlockFace.DOWN
+        );
 
-		Collections.addAll(
-			colors,
-			Material.BLACK_WOOL,
-			Material.BLUE_WOOL,
-			Material.BROWN_WOOL,
-			Material.CYAN_WOOL,
-			Material.GRAY_WOOL,
-			Material.GREEN_WOOL,
-			Material.LIGHT_BLUE_WOOL,
-			Material.LIGHT_GRAY_WOOL,
-			Material.LIME_WOOL,
-			Material.MAGENTA_WOOL,
-			Material.ORANGE_WOOL,
-			Material.PINK_WOOL,
-			Material.PURPLE_WOOL,
-			Material.RED_WOOL,
-			Material.WHITE_WOOL,
-			Material.YELLOW_WOOL
-		);
-	}
+        Collections.addAll(
+            colors,
+            Material.BLACK_WOOL,
+            Material.BLUE_WOOL,
+            Material.BROWN_WOOL,
+            Material.CYAN_WOOL,
+            Material.GRAY_WOOL,
+            Material.GREEN_WOOL,
+            Material.LIGHT_BLUE_WOOL,
+            Material.LIGHT_GRAY_WOOL,
+            Material.LIME_WOOL,
+            Material.MAGENTA_WOOL,
+            Material.ORANGE_WOOL,
+            Material.PINK_WOOL,
+            Material.PURPLE_WOOL,
+            Material.RED_WOOL,
+            Material.WHITE_WOOL,
+            Material.YELLOW_WOOL
+        );
+    }
 
-	@Override
-	public void onEnable() {
-		/* Commands */
-		this.getCommand("weapons").setExecutor(new CommandWeapons());
+    @Override
+    public void onEnable() {
+        /* Commands */
+        this.getCommand("weapons").setExecutor(new CommandWeapons());
 
-		/* Player Events */
-		this.getServer().getPluginManager().registerEvents(new PlayerReceiveWeapon(), this);
-		this.getServer().getPluginManager().registerEvents(new PlayerUseWeapon(), this);
+        /* Player Events */
+        this.getServer().getPluginManager().registerEvents(new PlayerReceiveWeapon(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerUseWeapon(), this);
 
-		/* Weapon Events */
-		this.getServer().getPluginManager().registerEvents(new WeaponArcher(), this);
-		this.getServer().getPluginManager().registerEvents(new WeaponArmageddon(), this);
-		this.getServer().getPluginManager().registerEvents(new WeaponBlobinator(), this);
-		this.getServer().getPluginManager().registerEvents(new WeaponGrenade(), this);
-		this.getServer().getPluginManager().registerEvents(new WeaponMachineGun(), this);
-	}
+        /* Weapon Events */
+        this.getServer().getPluginManager().registerEvents(new WeaponArcher(), this);
+        this.getServer().getPluginManager().registerEvents(new WeaponArmageddon(), this);
+        this.getServer().getPluginManager().registerEvents(new WeaponBlobinator(), this);
+        this.getServer().getPluginManager().registerEvents(new WeaponGrenade(), this);
+        this.getServer().getPluginManager().registerEvents(new WeaponMachineGun(), this);
+    }
 
-	public static HashSet<BlockFace> getBlockFaces() {
-		return blockFaces;
-	}
+    public static HashSet<BlockFace> getBlockFaces() {
+        return blockFaces;
+    }
 
-	public static List<Material> getColors() {
-		return colors;
-	}
+    public static List<Material> getColors() {
+        return colors;
+    }
 }

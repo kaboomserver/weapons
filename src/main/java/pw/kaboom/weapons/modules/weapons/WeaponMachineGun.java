@@ -28,98 +28,98 @@ import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import pw.kaboom.weapons.Main;
 
 public final class WeaponMachineGun implements Listener {
-	private static HashSet<UUID> machineGunActive = new HashSet<UUID>();
+    private static HashSet<UUID> machineGunActive = new HashSet<UUID>();
 
-	public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
-		if (item == Material.GOLDEN_HORSE_ARMOR
-				&& ("§rMachine Gun".equals(name) || "Machine Gun".equals(name))) {
-			final UUID playerUUID = event.getPlayer().getUniqueId();
+    public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
+        if (item == Material.GOLDEN_HORSE_ARMOR
+                && ("§rMachine Gun".equals(name) || "Machine Gun".equals(name))) {
+            final UUID playerUUID = event.getPlayer().getUniqueId();
 
-			if (!machineGunActive.contains(playerUUID)) {
-				machineGunActive.add(playerUUID);
-				final int maxBulletCount = 20;
+            if (!machineGunActive.contains(playerUUID)) {
+                machineGunActive.add(playerUUID);
+                final int maxBulletCount = 20;
 
-				new BukkitRunnable() {
-					private int i;
+                new BukkitRunnable() {
+                    private int i;
 
-					@Override
-					public void run() {
-						final Player player = event.getPlayer();
-						final Location eyeLocation = player.getEyeLocation();
-						final World world = player.getWorld();
-						final Vector velocity = eyeLocation.getDirection().multiply(12);
+                    @Override
+                    public void run() {
+                        final Player player = event.getPlayer();
+                        final Location eyeLocation = player.getEyeLocation();
+                        final World world = player.getWorld();
+                        final Vector velocity = eyeLocation.getDirection().multiply(12);
 
-						final Arrow arrow = player.launchProjectile(Arrow.class);
+                        final Arrow arrow = player.launchProjectile(Arrow.class);
 
-						arrow.setCustomName("WeaponMachineGunBullet");
-						arrow.setShooter(player);
-						arrow.setVelocity(velocity);
+                        arrow.setCustomName("WeaponMachineGunBullet");
+                        arrow.setShooter(player);
+                        arrow.setVelocity(velocity);
 
-						final float volume = 1.0F;
-						final float pitch = 63.0F;
+                        final float volume = 1.0F;
+                        final float pitch = 63.0F;
 
-						world.playSound(
-							eyeLocation,
-							Sound.ENTITY_GENERIC_EXPLODE,
-							volume,
-							pitch
-						);
+                        world.playSound(
+                            eyeLocation,
+                            Sound.ENTITY_GENERIC_EXPLODE,
+                            volume,
+                            pitch
+                        );
 
-						i++;
+                        i++;
 
-						if (i >= maxBulletCount) {
-							this.cancel();
-						}
-					}
-				}.runTaskTimer(JavaPlugin.getPlugin(Main.class), 0, 1);
+                        if (i >= maxBulletCount) {
+                            this.cancel();
+                        }
+                    }
+                }.runTaskTimer(JavaPlugin.getPlugin(Main.class), 0, 1);
 
-				machineGunActive.remove(playerUUID);
-			}
-			event.setCancelled(true);
-		}
-	}
+                machineGunActive.remove(playerUUID);
+            }
+            event.setCancelled(true);
+        }
+    }
 
-	/* Make shooter invulnerable to weapon projectiles */
-	@EventHandler
-	private void onProjectileCollide(final ProjectileCollideEvent event) {
-		if (event.getEntityType() == EntityType.ARROW) {
-			final Projectile projectile = event.getEntity();
+    /* Make shooter invulnerable to weapon projectiles */
+    @EventHandler
+    private void onProjectileCollide(final ProjectileCollideEvent event) {
+        if (event.getEntityType() == EntityType.ARROW) {
+            final Projectile projectile = event.getEntity();
 
-			if ("WeaponMachineGunBullet".equals(projectile.getCustomName())) {
-				final Entity collidedWith = event.getCollidedWith();
+            if ("WeaponMachineGunBullet".equals(projectile.getCustomName())) {
+                final Entity collidedWith = event.getCollidedWith();
 
-				if (collidedWith.getType() == EntityType.PLAYER
-						&& projectile.getShooter() instanceof Player
-						&& ((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
-					event.setCancelled(true);
-				} else if (collidedWith instanceof LivingEntity) {
-					final int duration = 90000;
-					final int amplifier = 3;
-					final boolean ambient = true;
-					final boolean particles = false;
+                if (collidedWith.getType() == EntityType.PLAYER
+                        && projectile.getShooter() instanceof Player
+                        && ((Player) projectile.getShooter()).getUniqueId().equals(collidedWith.getUniqueId())) {
+                    event.setCancelled(true);
+                } else if (collidedWith instanceof LivingEntity) {
+                    final int duration = 90000;
+                    final int amplifier = 3;
+                    final boolean ambient = true;
+                    final boolean particles = false;
 
-					final PotionEffect harm = new PotionEffect(
-						PotionEffectType.HARM,
-						duration,
-						amplifier,
-						ambient,
-						particles
-					);
+                    final PotionEffect harm = new PotionEffect(
+                        PotionEffectType.HARM,
+                        duration,
+                        amplifier,
+                        ambient,
+                        particles
+                    );
 
-					((LivingEntity) collidedWith).addPotionEffect(harm, true);
-				}
-			}
-		}
-	}
+                    ((LivingEntity) collidedWith).addPotionEffect(harm, true);
+                }
+            }
+        }
+    }
 
-	@EventHandler
-	private void onProjectileHit(final ProjectileHitEvent event) {
-		if (event.getEntityType() == EntityType.ARROW) {
-			final Projectile projectile = event.getEntity();
+    @EventHandler
+    private void onProjectileHit(final ProjectileHitEvent event) {
+        if (event.getEntityType() == EntityType.ARROW) {
+            final Projectile projectile = event.getEntity();
 
-			if ("WeaponMachineGunBullet".equals(projectile.getCustomName())) {
-				projectile.remove();
-			}
-		}
-	}
+            if ("WeaponMachineGunBullet".equals(projectile.getCustomName())) {
+                projectile.remove();
+            }
+        }
+    }
 }

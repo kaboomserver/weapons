@@ -15,50 +15,50 @@ import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public final class WeaponGrenade implements Listener {
-	public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
-		if (item == Material.EGG
-				&& ("§rGrenade".equals(name) || "Grenade".equals(name))) {
-			event.setCancelled(true);
+    public static void rightClick(final Material item, final String name, final PlayerInteractEvent event) {
+        if (item == Material.EGG
+                && ("§rGrenade".equals(name) || "Grenade".equals(name))) {
+            event.setCancelled(true);
 
-			final Player player = event.getPlayer();
-			final Location eyeLocation = player.getEyeLocation();
+            final Player player = event.getPlayer();
+            final Location eyeLocation = player.getEyeLocation();
 
-			final Egg egg = player.launchProjectile(Egg.class);
-			egg.setCustomName("WeaponGrenade");
-			egg.setShooter(player);
+            final Egg egg = player.launchProjectile(Egg.class);
+            egg.setCustomName("WeaponGrenade");
+            egg.setShooter(player);
 
-			final World world = player.getWorld();
-			final float volume = 1.0F;
-			final float pitch = 1.0F;
+            final World world = player.getWorld();
+            final float volume = 1.0F;
+            final float pitch = 1.0F;
 
-			world.playSound(
-				eyeLocation,
-				Sound.ENTITY_EGG_THROW,
-				volume,
-				pitch
-			);
-		}
-	}
+            world.playSound(
+                eyeLocation,
+                Sound.ENTITY_EGG_THROW,
+                volume,
+                pitch
+            );
+        }
+    }
 
-	@EventHandler
-	private void onPlayerEggThrow(final PlayerEggThrowEvent event) {
-		if ("WeaponGrenade".equals(event.getEgg().getCustomName())) {
-			event.setHatching(false);
-		}
-	}
+    @EventHandler
+    private void onPlayerEggThrow(final PlayerEggThrowEvent event) {
+        if ("WeaponGrenade".equals(event.getEgg().getCustomName())) {
+            event.setHatching(false);
+        }
+    }
 
-	@EventHandler
-	private void onProjectileHit(final ProjectileHitEvent event) {
-		if (event.getEntityType() == EntityType.EGG) {
-			final Projectile projectile = event.getEntity();
+    @EventHandler
+    private void onProjectileHit(final ProjectileHitEvent event) {
+        if (event.getEntityType() == EntityType.EGG) {
+            final Projectile projectile = event.getEntity();
 
-			if ("WeaponGrenade".equals(projectile.getCustomName())) {
-				final Location location = projectile.getLocation();
-				final World world = location.getWorld();
-				final float power = 6;
+            if ("WeaponGrenade".equals(projectile.getCustomName())) {
+                final Location location = projectile.getLocation();
+                final World world = location.getWorld();
+                final float power = 6;
 
-				world.createExplosion(location, power);
-			}
-		}
-	}
+                world.createExplosion(location, power);
+            }
+        }
+    }
 }

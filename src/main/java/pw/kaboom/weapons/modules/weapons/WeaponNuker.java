@@ -10,43 +10,43 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
 public final class WeaponNuker {
-	private WeaponNuker() {
-	}
+    private WeaponNuker() {
+    }
 
-	public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
-		if (item == Material.BLAZE_ROD
-				&& ("§rNuker".equals(name) || "Nuker".equals(name))) {
-			final Player player = event.getPlayer();
-			final Location eyeLocation = player.getEyeLocation();
-			final Vector velocity = eyeLocation.getDirection().multiply(10);
-			final int yield = 8;
+    public static void leftClick(final Material item, final String name, final PlayerInteractEvent event) {
+        if (item == Material.BLAZE_ROD
+                && ("§rNuker".equals(name) || "Nuker".equals(name))) {
+            final Player player = event.getPlayer();
+            final Location eyeLocation = player.getEyeLocation();
+            final Vector velocity = eyeLocation.getDirection().multiply(10);
+            final int yield = 8;
 
-			final Fireball fireball = player.launchProjectile(Fireball.class);
-			fireball.setShooter(player);
-			fireball.setVelocity(velocity);
-			fireball.setYield(yield);
+            final Fireball fireball = player.launchProjectile(Fireball.class);
+            fireball.setShooter(player);
+            fireball.setVelocity(velocity);
+            fireball.setYield(yield);
 
-			final World world = player.getWorld();
-			final float volume = 0.9F;
-			final float pitch = 1.5F;
+            final World world = player.getWorld();
+            final float volume = 0.9F;
+            final float pitch = 1.5F;
 
-			world.playSound(
-				eyeLocation,
-				Sound.ENTITY_GHAST_SHOOT,
-				volume,
-				pitch
-			);
+            world.playSound(
+                eyeLocation,
+                Sound.ENTITY_GHAST_SHOOT,
+                volume,
+                pitch
+            );
 
-			final float volume2 = 0.8F;
-			final float pitch2 = 2.0F;
+            final float volume2 = 0.8F;
+            final float pitch2 = 2.0F;
 
-			world.playSound(
-				eyeLocation,
-				Sound.ENTITY_BAT_TAKEOFF,
-				volume2,
-				pitch2
-			);
-			event.setCancelled(true);
-		}
-	}
+            world.playSound(
+                eyeLocation,
+                Sound.ENTITY_BAT_TAKEOFF,
+                volume2,
+                pitch2
+            );
+            event.setCancelled(true);
+        }
+    }
 }
