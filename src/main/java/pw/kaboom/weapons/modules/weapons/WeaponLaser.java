@@ -13,14 +13,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
+import net.kyori.adventure.text.Component;
+
 public final class WeaponLaser {
     private WeaponLaser() {
     }
 
-    public static void rightClick(final Material item, final String name,
+    public static void rightClick(final Material item, final Component name,
                                   final PlayerInteractEvent event) {
-        if (item == Material.BLAZE_POWDER
-                && ("§rLaser".equals(name) || "Laser".equals(name))) {
+        if (item == Material.BLAZE_POWDER && Component.text("Laser").equals(name)) {
             final Player player = event.getPlayer();
             final Location eyeLocation = player.getEyeLocation();
             final Vector direction = eyeLocation.getDirection();

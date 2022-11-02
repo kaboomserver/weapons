@@ -16,11 +16,12 @@ import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
+import net.kyori.adventure.text.Component;
+
 public final class WeaponArcher implements Listener {
-    public static void leftClick(final Material item, final String name,
+    public static void leftClick(final Material item, final Component name,
                                  final PlayerInteractEvent event) {
-        if (item == Material.SPECTRAL_ARROW
-                && ("§rArcher".equals(name) || "Archer".equals(name))) {
+        if (item == Material.SPECTRAL_ARROW && Component.text("Archer").equals(name)) {
             final Player player = event.getPlayer();
             final World world = player.getWorld();
 
@@ -40,7 +41,7 @@ public final class WeaponArcher implements Listener {
                     player.getLocation(),
                     EntityType.SPECTRAL_ARROW
                 );
-                arrow.setCustomName("WeaponArcherArrow");
+                arrow.customName(Component.text("WeaponArcherArrow"));
                 arrow.setShooter(player);
                 arrow.setVelocity(randomDirection);
             }
@@ -65,7 +66,7 @@ public final class WeaponArcher implements Listener {
         if (event.getEntityType() == EntityType.SPECTRAL_ARROW) {
             final Projectile projectile = event.getEntity();
 
-            if ("WeaponArcherArrow".equals(projectile.getCustomName())) {
+            if (Component.text("WeaponArcherArrow").equals(projectile.customName())) {
                 final Entity collidedWith = event.getCollidedWith();
 
                 if (collidedWith.getType() == EntityType.PLAYER

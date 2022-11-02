@@ -6,20 +6,26 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import net.kyori.adventure.text.Component;
+
 public final class PlayerReceiveWeapon implements Listener {
     @EventHandler
     void onInventoryClick(final InventoryClickEvent event) {
-        if (event.isCancelled() || !"Weapons".equals(event.getView().getTitle())) {
+        if (event.isCancelled() || !Component.text("Weapons").equals(event.getView().title())) {
             return;
         }
 
         final ItemStack item = event.getCurrentItem();
-        final String weaponName = item.getItemMeta().getDisplayName().toLowerCase();
+        final Component weaponName = item.getItemMeta().displayName();
         final Player player = (Player) event.getWhoClicked();
 
         player.getInventory().addItem(item);
         player.closeInventory();
-        player.sendMessage("You have received the " + weaponName + "!");
+        player.sendMessage(
+            Component.text("You have received the ")
+                .append(weaponName)
+                .append(Component.text("!"))
+        );
     }
 }
 

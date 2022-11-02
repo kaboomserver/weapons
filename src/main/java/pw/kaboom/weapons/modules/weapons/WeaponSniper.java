@@ -11,14 +11,15 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import net.kyori.adventure.text.Component;
+
 public final class WeaponSniper {
     private WeaponSniper() {
     }
 
-    public static void leftClick(final Material item, final String name,
+    public static void leftClick(final Material item, final Component name,
                                  final PlayerInteractEvent event) {
-        if (item == Material.IRON_HORSE_ARMOR
-                && ("§rSniper".equals(name) || "Sniper".equals(name))) {
+        if (item == Material.IRON_HORSE_ARMOR && Component.text("Sniper").equals(name)) {
             final Player player = event.getPlayer();
             final Location eyeLocation = player.getEyeLocation();
             final Vector velocity = eyeLocation.getDirection().multiply(12);
@@ -41,10 +42,9 @@ public final class WeaponSniper {
         }
     }
 
-    public static void rightClick(final Material item, final String name,
+    public static void rightClick(final Material item, final Component name,
                                   final PlayerInteractEvent event) {
-        if (item == Material.IRON_HORSE_ARMOR
-                && ("§rSniper".equals(name) || "Sniper".equals(name))) {
+        if (item == Material.IRON_HORSE_ARMOR && Component.text("Sniper").equals(name)) {
             final Player player = event.getPlayer();
 
             if (player.hasPotionEffect(PotionEffectType.SLOW)) {

@@ -16,11 +16,12 @@ import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
+import net.kyori.adventure.text.Component;
+
 public final class WeaponArmageddon implements Listener {
-    public static void leftClick(final Material item, final String name,
+    public static void leftClick(final Material item, final Component name,
                                  final PlayerInteractEvent event) {
-        if (item == Material.FIRE_CHARGE
-                && ("§rArmageddon".equals(name) || "Armageddon".equals(name))) {
+        if (item == Material.FIRE_CHARGE && Component.text("Armageddon").equals(name)) {
             final Player player = event.getPlayer();
             final World world = player.getWorld();
 
@@ -43,7 +44,7 @@ public final class WeaponArmageddon implements Listener {
                 );
 
                 fireball.setBounce(false);
-                fireball.setCustomName("WeaponArmegaddonCharge");
+                fireball.customName(Component.text("WeaponArmegaddonCharge"));
                 fireball.setDirection(velocity);
                 fireball.setShooter(player);
                 fireball.setYield(yield);
@@ -70,7 +71,7 @@ public final class WeaponArmageddon implements Listener {
         if (event.getEntityType() == EntityType.FIREBALL) {
             final Projectile projectile = event.getEntity();
 
-            if ("WeaponArmegaddonCharge".equals(projectile.getCustomName())) {
+            if (Component.text("WeaponArmegaddonCharge").equals(projectile.customName())) {
                 final Entity collidedWith = event.getCollidedWith();
 
                 if ((collidedWith.getType() == EntityType.PLAYER

@@ -7,14 +7,15 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import net.kyori.adventure.text.Component;
+
 public final class WeaponLightningStick {
     private WeaponLightningStick() {
     }
 
-    public static void leftClick(final Material item, final String name,
+    public static void leftClick(final Material item, final Component name,
                                  final PlayerInteractEvent event) {
-        if (item == Material.STICK
-                && ("§rLightning Stick".equals(name) || "Lightning Stick".equals(name))) {
+        if (item == Material.STICK && Component.text("Lightning Stick").equals(name)) {
             final int maxDistance = 100;
             final Location lookLocation = event.getPlayer().getTargetBlock(
                 (Set<Material>) null, maxDistance).getLocation();
