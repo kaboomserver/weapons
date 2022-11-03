@@ -26,6 +26,7 @@ import org.bukkit.util.Vector;
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 
 import pw.kaboom.weapons.Main;
 
@@ -34,7 +35,8 @@ public final class WeaponMachineGun implements Listener {
 
     public static void rightClick(final Material item, final Component name,
                                   final PlayerInteractEvent event) {
-        if (item == Material.GOLDEN_HORSE_ARMOR && Component.text("Machine Gun").equals(name)) {
+        if (item == Material.GOLDEN_HORSE_ARMOR && Component.text("Machine Gun")
+                .decoration(TextDecoration.ITALIC, false).equals(name)) {
             final UUID playerUUID = event.getPlayer().getUniqueId();
 
             if (!machineGunActive.contains(playerUUID)) {

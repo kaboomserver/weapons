@@ -10,7 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public final class CommandWeapons implements CommandExecutor {
     private void addWeapon(final Inventory inventory, final Material material,
@@ -32,16 +34,26 @@ public final class CommandWeapons implements CommandExecutor {
             final Player player = (Player) sender;
             final Inventory inventory = Bukkit.createInventory(null, 18, Component.text("Weapons"));
 
-            addWeapon(inventory, Material.ANVIL, Component.text("Anvil Dropper"));
-            addWeapon(inventory, Material.SPECTRAL_ARROW, Component.text("Archer"));
-            addWeapon(inventory, Material.FIRE_CHARGE, Component.text("Armageddon"));
-            addWeapon(inventory, Material.MAGMA_CREAM, Component.text("Blobinator"));
-            addWeapon(inventory, Material.EGG, Component.text("Grenade"));
-            addWeapon(inventory, Material.BLAZE_POWDER, Component.text("Laser"));
-            addWeapon(inventory, Material.STICK, Component.text("Lightning Stick"));
-            addWeapon(inventory, Material.GOLDEN_HORSE_ARMOR, Component.text("Machine Gun"));
-            addWeapon(inventory, Material.BLAZE_ROD, Component.text("Nuker"));
-            addWeapon(inventory, Material.IRON_HORSE_ARMOR, Component.text("Sniper"));
+            addWeapon(inventory, Material.ANVIL, Component.text("Anvil Dropper")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.SPECTRAL_ARROW, Component.text("Archer")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.FIRE_CHARGE, Component.text("Armageddon")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.MAGMA_CREAM, Component.text("Blobinator")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.EGG, Component.text("Grenade")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.BLAZE_POWDER, Component.text("Laser")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.STICK, Component.text("Lightning Stick")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.GOLDEN_HORSE_ARMOR, Component.text("Machine Gun")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.BLAZE_ROD, Component.text("Nuker")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.IRON_HORSE_ARMOR, Component.text("Sniper")
+                    .decoration(TextDecoration.ITALIC, false));
             player.openInventory(inventory);
         }
         return true;

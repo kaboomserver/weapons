@@ -21,13 +21,15 @@ import org.bukkit.util.Vector;
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 
 import pw.kaboom.weapons.Main;
 
 public final class WeaponBlobinator implements Listener {
     public static void leftClick(final Material item, final Component name,
                                  final PlayerInteractEvent event) {
-        if (item == Material.MAGMA_CREAM && Component.text("Blobinator").equals(name)) {
+        if (item == Material.MAGMA_CREAM && Component.text("Blobinator")
+                .decoration(TextDecoration.ITALIC, false).equals(name)) {
             final Player player = event.getPlayer();
             final Location eyeLocation = player.getEyeLocation();
             final Vector velocity = eyeLocation.getDirection().multiply(8);

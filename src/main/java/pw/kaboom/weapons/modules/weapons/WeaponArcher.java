@@ -17,11 +17,13 @@ import org.bukkit.util.Vector;
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public final class WeaponArcher implements Listener {
     public static void leftClick(final Material item, final Component name,
                                  final PlayerInteractEvent event) {
-        if (item == Material.SPECTRAL_ARROW && Component.text("Archer").equals(name)) {
+        if (item == Material.SPECTRAL_ARROW && Component.text("Archer")
+                .decoration(TextDecoration.ITALIC, false).equals(name)) {
             final Player player = event.getPlayer();
             final World world = player.getWorld();
 

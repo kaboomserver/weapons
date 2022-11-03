@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public final class WeaponAnvilDropper {
     private WeaponAnvilDropper() {
@@ -13,7 +14,8 @@ public final class WeaponAnvilDropper {
 
     public static void leftClick(final Material item, final Component name,
                                  final PlayerInteractEvent event) {
-        if (item == Material.ANVIL && Component.text("Anvil Dropper").equals(name)) {
+        if (item == Material.ANVIL && Component.text("Anvil Dropper")
+                .decoration(TextDecoration.ITALIC, false).equals(name)) {
             final int min = -2;
             final int max = 2;
 

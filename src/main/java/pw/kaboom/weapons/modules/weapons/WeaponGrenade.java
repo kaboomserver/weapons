@@ -15,11 +15,13 @@ import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 
 public final class WeaponGrenade implements Listener {
     public static void rightClick(final Material item, final Component name,
                                   final PlayerInteractEvent event) {
-        if (item == Material.EGG && Component.text("Grenade").equals(name)) {
+        if (item == Material.EGG && Component.text("Grenade")
+                .decoration(TextDecoration.ITALIC, false).equals(name)) {
             event.setCancelled(true);
 
             final Player player = event.getPlayer();
