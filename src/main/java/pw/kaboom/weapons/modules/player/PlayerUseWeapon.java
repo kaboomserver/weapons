@@ -7,6 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import net.kyori.adventure.text.Component;
+
 import pw.kaboom.weapons.modules.weapons.WeaponAnvilDropper;
 import pw.kaboom.weapons.modules.weapons.WeaponArcher;
 import pw.kaboom.weapons.modules.weapons.WeaponArmageddon;
@@ -26,10 +28,10 @@ public final class PlayerUseWeapon implements Listener {
             return;
         }
 
-        String name = "";
+        Component name = Component.empty();
 
         try {
-            name = event.getItem().getItemMeta().getDisplayName();
+            name = event.getItem().getItemMeta().displayName();
         } catch (Exception ignored) {
             return;
         }

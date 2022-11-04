@@ -20,19 +20,22 @@ import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+
 import pw.kaboom.weapons.Main;
 
 public final class WeaponBlobinator implements Listener {
-    public static void leftClick(final Material item, final String name,
+    public static void leftClick(final Material item, final Component name,
                                  final PlayerInteractEvent event) {
-        if (item == Material.MAGMA_CREAM
-                && ("§rBlobinator".equals(name) || "Blobinator".equals(name))) {
+        if (item == Material.MAGMA_CREAM && Component.text("Blobinator")
+                .decoration(TextDecoration.ITALIC, false).equals(name)) {
             final Player player = event.getPlayer();
             final Location eyeLocation = player.getEyeLocation();
             final Vector velocity = eyeLocation.getDirection().multiply(8);
 
             final Snowball snowball = player.launchProjectile(Snowball.class);
-            snowball.setCustomName("WeaponBlobinatorBall");
+            snowball.customName(Component.text("WeaponBlobinatorBall"));
             snowball.setShooter(player);
             snowball.setVelocity(velocity);
 
@@ -74,7 +77,7 @@ public final class WeaponBlobinator implements Listener {
         if (event.getEntityType() == EntityType.SNOWBALL) {
             final Projectile projectile = event.getEntity();
 
-            if ("WeaponBlobinatorBall".equals(projectile.getCustomName())) {
+            if (Component.text("WeaponBlobinatorBall").equals(projectile.customName())) {
                 event.setCancelled(true);
             }
         }
@@ -87,7 +90,7 @@ public final class WeaponBlobinator implements Listener {
             final Projectile projectile = event.getEntity();
 
             if (hitBlock != null
-                    && "WeaponBlobinatorBall".equals(projectile.getCustomName())) {
+                    && Component.text("WeaponBlobinatorBall").equals(projectile.customName())) {
                 final int radius = 4;
                 final World world = projectile.getWorld();
                 final Material color = Main.getColors().get(

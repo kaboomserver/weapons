@@ -25,15 +25,18 @@ import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+
 import pw.kaboom.weapons.Main;
 
 public final class WeaponMachineGun implements Listener {
     private static HashSet<UUID> machineGunActive = new HashSet<UUID>();
 
-    public static void rightClick(final Material item, final String name,
+    public static void rightClick(final Material item, final Component name,
                                   final PlayerInteractEvent event) {
-        if (item == Material.GOLDEN_HORSE_ARMOR
-                && ("§rMachine Gun".equals(name) || "Machine Gun".equals(name))) {
+        if (item == Material.GOLDEN_HORSE_ARMOR && Component.text("Machine Gun")
+                .decoration(TextDecoration.ITALIC, false).equals(name)) {
             final UUID playerUUID = event.getPlayer().getUniqueId();
 
             if (!machineGunActive.contains(playerUUID)) {
@@ -52,7 +55,7 @@ public final class WeaponMachineGun implements Listener {
 
                         final Arrow arrow = player.launchProjectile(Arrow.class);
 
-                        arrow.setCustomName("WeaponMachineGunBullet");
+                        arrow.customName(Component.text("WeaponMachineGunBullet"));
                         arrow.setShooter(player);
                         arrow.setVelocity(velocity);
 
@@ -86,7 +89,7 @@ public final class WeaponMachineGun implements Listener {
         if (event.getEntityType() == EntityType.ARROW) {
             final Projectile projectile = event.getEntity();
 
-            if ("WeaponMachineGunBullet".equals(projectile.getCustomName())) {
+            if (Component.text("WeaponMachineGunBullet").equals(projectile.customName())) {
                 final Entity collidedWith = event.getCollidedWith();
 
                 if (collidedWith.getType() == EntityType.PLAYER
@@ -119,7 +122,7 @@ public final class WeaponMachineGun implements Listener {
         if (event.getEntityType() == EntityType.ARROW) {
             final Projectile projectile = event.getEntity();
 
-            if ("WeaponMachineGunBullet".equals(projectile.getCustomName())) {
+            if (Component.text("WeaponMachineGunBullet").equals(projectile.customName())) {
                 projectile.remove();
             }
         }

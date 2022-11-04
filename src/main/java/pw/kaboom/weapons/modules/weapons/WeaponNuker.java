@@ -9,14 +9,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+
 public final class WeaponNuker {
     private WeaponNuker() {
     }
 
-    public static void leftClick(final Material item, final String name,
+    public static void leftClick(final Material item, final Component name,
                                  final PlayerInteractEvent event) {
-        if (item == Material.BLAZE_ROD
-                && ("§rNuker".equals(name) || "Nuker".equals(name))) {
+        if (item == Material.BLAZE_ROD && Component.text("Nuker")
+                .decoration(TextDecoration.ITALIC, false).equals(name)) {
             final Player player = event.getPlayer();
             final Location eyeLocation = player.getEyeLocation();
             final Vector velocity = eyeLocation.getDirection().multiply(10);

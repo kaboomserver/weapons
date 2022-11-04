@@ -14,18 +14,21 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+
 public final class WeaponGrenade implements Listener {
-    public static void rightClick(final Material item, final String name,
+    public static void rightClick(final Material item, final Component name,
                                   final PlayerInteractEvent event) {
-        if (item == Material.EGG
-                && ("§rGrenade".equals(name) || "Grenade".equals(name))) {
+        if (item == Material.EGG && Component.text("Grenade")
+                .decoration(TextDecoration.ITALIC, false).equals(name)) {
             event.setCancelled(true);
 
             final Player player = event.getPlayer();
             final Location eyeLocation = player.getEyeLocation();
 
             final Egg egg = player.launchProjectile(Egg.class);
-            egg.setCustomName("WeaponGrenade");
+            egg.customName(Component.text("WeaponGrenade"));
             egg.setShooter(player);
 
             final World world = player.getWorld();
@@ -43,7 +46,7 @@ public final class WeaponGrenade implements Listener {
 
     @EventHandler
     private void onPlayerEggThrow(final PlayerEggThrowEvent event) {
-        if ("WeaponGrenade".equals(event.getEgg().getCustomName())) {
+        if (Component.text("WeaponGrenade").equals(event.getEgg().customName())) {
             event.setHatching(false);
         }
     }
@@ -53,7 +56,7 @@ public final class WeaponGrenade implements Listener {
         if (event.getEntityType() == EntityType.EGG) {
             final Projectile projectile = event.getEntity();
 
-            if ("WeaponGrenade".equals(projectile.getCustomName())) {
+            if (Component.text("WeaponGrenade").equals(projectile.customName())) {
                 final Location location = projectile.getLocation();
                 final World world = location.getWorld();
                 final float power = 6;
