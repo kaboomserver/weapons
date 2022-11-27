@@ -1,5 +1,7 @@
 package pw.kaboom.weapons.commands;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -10,9 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 
 public final class CommandWeapons implements CommandExecutor {
     private void addWeapon(final Inventory inventory, final Material material,
@@ -53,6 +52,8 @@ public final class CommandWeapons implements CommandExecutor {
             addWeapon(inventory, Material.BLAZE_ROD, Component.text("Nuker")
                     .decoration(TextDecoration.ITALIC, false));
             addWeapon(inventory, Material.IRON_HORSE_ARMOR, Component.text("Sniper")
+                    .decoration(TextDecoration.ITALIC, false));
+            addWeapon(inventory, Material.BOW, Component.text("Explosive Bow")
                     .decoration(TextDecoration.ITALIC, false));
             player.openInventory(inventory);
         }
