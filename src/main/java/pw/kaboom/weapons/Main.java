@@ -13,7 +13,7 @@ import pw.kaboom.weapons.modules.player.PlayerUseWeapon;
 import pw.kaboom.weapons.modules.weapons.WeaponArcher;
 import pw.kaboom.weapons.modules.weapons.WeaponArmageddon;
 import pw.kaboom.weapons.modules.weapons.WeaponBlobinator;
-import pw.kaboom.weapons.modules.weapons.WeaponExplosiveBow;
+import pw.kaboom.weapons.modules.weapons.WeaponExplosiveCrossbow;
 import pw.kaboom.weapons.modules.weapons.WeaponGrenade;
 import pw.kaboom.weapons.modules.weapons.WeaponMachineGun;
 
@@ -70,7 +70,7 @@ public final class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new WeaponBlobinator(), this);
         this.getServer().getPluginManager().registerEvents(new WeaponGrenade(), this);
         this.getServer().getPluginManager().registerEvents(new WeaponMachineGun(), this);
-        this.getServer().getPluginManager().registerEvents(new WeaponExplosiveBow(), this);
+        this.getServer().getPluginManager().registerEvents(new WeaponExplosiveCrossbow(), this);
     }
 
     public static HashSet<BlockFace> getBlockFaces() {

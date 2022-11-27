@@ -26,7 +26,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
 
-public class WeaponExplosiveBow implements Listener {
+public class WeaponExplosiveCrossbow implements Listener {
 
 	private static final int PARTICLE_OFFSET = 2;
 	private final List<Projectile> explosiveProjectiles = new ArrayList<>();
@@ -48,14 +48,14 @@ public class WeaponExplosiveBow implements Listener {
 		final Material offHandItemMaterial = offHandItem.getType();
 		final Material mainHandItemMaterial = mainHandItem.getType();
 
-		if (!mainHandItemMaterial.equals(Material.BOW) && !offHandItemMaterial.equals(
-			Material.BOW)) {
+		if (!mainHandItemMaterial.equals(Material.CROSSBOW) && !offHandItemMaterial.equals(
+			Material.CROSSBOW)) {
 			return;
 		}
 
-		final Component itemName = Component.text("Explosive Bow")
+		final Component itemName = Component.text("Explosive Crossbow")
 			.decoration(TextDecoration.ITALIC, false);
-		final ItemStack bow = mainHandItemMaterial == Material.BOW ?
+		final ItemStack bow = mainHandItemMaterial == Material.CROSSBOW ?
 			mainHandItem : offHandItem;
 		final ItemMeta bowMeta = bow.getItemMeta();
 		final Component displayName = bowMeta.displayName();
@@ -68,7 +68,7 @@ public class WeaponExplosiveBow implements Listener {
 			return;
 		}
 
-		projectile.customName(Component.text("WeaponExplosiveBow"));
+		projectile.customName(Component.text("WeaponExplosiveArrow"));
 		explosiveProjectiles.add(projectile);
 	}
 
@@ -81,7 +81,7 @@ public class WeaponExplosiveBow implements Listener {
 			return;
 		}
 
-		if (!customName.equals(Component.text("WeaponExplosiveBow"))) {
+		if (!customName.equals(Component.text("WeaponExplosiveArrow"))) {
 			return;
 		}
 
@@ -96,7 +96,7 @@ public class WeaponExplosiveBow implements Listener {
 
 		final World world = projectile.getWorld();
 
-		world.createExplosion(explosionLocation, 4.8f, true);
+		world.createExplosion(explosionLocation, 4.9f, true);
 		projectile.remove();
 	}
 

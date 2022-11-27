@@ -53,7 +53,7 @@ public final class CommandWeapons implements CommandExecutor {
                     .decoration(TextDecoration.ITALIC, false));
             addWeapon(inventory, Material.IRON_HORSE_ARMOR, Component.text("Sniper")
                     .decoration(TextDecoration.ITALIC, false));
-            addWeapon(inventory, Material.BOW, Component.text("Explosive Bow")
+            addWeapon(inventory, Material.CROSSBOW, Component.text("Explosive Crossbow")
                     .decoration(TextDecoration.ITALIC, false));
             player.openInventory(inventory);
         }
