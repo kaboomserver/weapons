@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import pw.kaboom.weapons.commands.CommandWeapons;
 import pw.kaboom.weapons.modules.player.PlayerReceiveWeapon;
 import pw.kaboom.weapons.modules.player.PlayerUseWeapon;
 import pw.kaboom.weapons.modules.weapons.WeaponArcher;
 import pw.kaboom.weapons.modules.weapons.WeaponArmageddon;
 import pw.kaboom.weapons.modules.weapons.WeaponBlobinator;
+import pw.kaboom.weapons.modules.weapons.WeaponExplosiveCrossbow;
 import pw.kaboom.weapons.modules.weapons.WeaponGrenade;
 import pw.kaboom.weapons.modules.weapons.WeaponMachineGun;
 
@@ -71,6 +70,7 @@ public final class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new WeaponBlobinator(), this);
         this.getServer().getPluginManager().registerEvents(new WeaponGrenade(), this);
         this.getServer().getPluginManager().registerEvents(new WeaponMachineGun(), this);
+        this.getServer().getPluginManager().registerEvents(new WeaponExplosiveCrossbow(), this);
     }
 
     public static HashSet<BlockFace> getBlockFaces() {
