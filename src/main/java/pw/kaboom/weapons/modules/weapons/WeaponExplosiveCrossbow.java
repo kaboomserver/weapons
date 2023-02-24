@@ -34,8 +34,12 @@ public final class WeaponExplosiveCrossbow implements Listener {
 	private final List<Projectile> explosiveProjectiles = new ArrayList<>();
 	private final SecureRandom secureRandom = new SecureRandom();
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR)
 	public void onShootArrow(ProjectileLaunchEvent event) {
+		if (event.isCancelled()) {
+			return;
+		}
+
 		final Projectile projectile = event.getEntity();
 		final ProjectileSource source = projectile.getShooter();
 
