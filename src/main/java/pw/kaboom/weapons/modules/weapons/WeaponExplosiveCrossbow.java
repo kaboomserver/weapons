@@ -5,6 +5,8 @@ import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
@@ -87,12 +89,15 @@ public final class WeaponExplosiveCrossbow implements Listener {
 
 		final Entity hitEntity = event.getHitEntity();
 		final Block hitBlock = event.getHitBlock();
+		final Location explosionLocation;
 
-		final Location explosionLocation =
-			(hitBlock != null || hitEntity != null) ?
-				(hitEntity != null
-					? hitEntity.getLocation() : hitBlock.getLocation())
-				: projectile.getLocation();
+		if (hitBlock != null) {
+			explosionLocation = hitBlock.getLocation();
+		} else if (hitEntity != null) {
+			explosionLocation = hitEntity.getLocation();
+		} else {
+			explosionLocation = projectile.getLocation();
+		}
 
 		final World world = projectile.getWorld();
 
