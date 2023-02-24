@@ -26,7 +26,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.projectiles.ProjectileSource;
 
-public class WeaponExplosiveCrossbow implements Listener {
+public final class WeaponExplosiveCrossbow implements Listener {
 
 	private static final int PARTICLE_OFFSET = 2;
 	private final List<Projectile> explosiveProjectiles = new ArrayList<>();
