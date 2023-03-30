@@ -3,6 +3,7 @@ main: pw.kaboom.weapons.Main
 description: Plugin that implements various kinds of weapons.
 api-version: 1.13
 version: master
+folia-supported: true
 
 commands:
    weapons:
