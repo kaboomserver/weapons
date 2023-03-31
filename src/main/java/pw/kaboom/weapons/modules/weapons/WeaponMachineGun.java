@@ -133,7 +133,7 @@ public final class WeaponMachineGun implements Listener {
                 pitch
             );
 
-            numShotBullets++;
+            numFiredBullets++;
 
             if (numFiredBullets >= MAX_BULLET_COUNT) {
                 iterator.remove();
