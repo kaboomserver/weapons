@@ -88,7 +88,7 @@ public final class WeaponArmageddon implements Listener {
         if ((collidedWith.getType() == EntityType.PLAYER
                 && projectile.getShooter() instanceof Player
                 && ((Player) projectile.getShooter()).getUniqueId().equals(
-                    collidedWith.getUniqueId())) {
+                    collidedWith.getUniqueId()))
                 || collidedWith.getType() == EntityType.FIREBALL) {
             event.setCancelled(true);
         }

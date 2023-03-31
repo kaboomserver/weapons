@@ -116,21 +116,22 @@ public final class WeaponMachineGun implements Listener {
             final World world = player.getWorld();
             final Vector velocity = eyeLocation.getDirection().multiply(12);
 
-            final Arrow arrow = player.launchProjectile(Arrow.class);
+            world.getChunkAtAsync(eyeLocation).thenAccept(chunk -> {
+                final Arrow arrow = player.launchProjectile(Arrow.class);
+                final float volume = 1.0F;
+                final float pitch = 63.0F;
 
-            arrow.customName(Component.text("WeaponMachineGunBullet"));
-            arrow.setShooter(player);
-            arrow.setVelocity(velocity);
+                arrow.customName(Component.text("WeaponMachineGunBullet"));
+                arrow.setShooter(player);
+                arrow.setVelocity(velocity);
 
-            final float volume = 1.0F;
-            final float pitch = 63.0F;
-
-            world.playSound(
-                eyeLocation,
-                Sound.ENTITY_GENERIC_EXPLODE,
-                volume,
-                pitch
-            );
+                world.playSound(
+                    eyeLocation,
+                    Sound.ENTITY_GENERIC_EXPLODE,
+                    volume,
+                    pitch
+                );
+            });
 
             numFiredBullets++;
             machineGunActive.put(playerUUID, numFiredBullets);
