@@ -1,7 +1,7 @@
 package pw.kaboom.weapons.modules.weapons;
 
 import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
-import com.destroystokyo.paper.event.server.ServerTickEndEvent;
+import com.destroystokyo.paper.event.server.ServerTickStartEvent;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +121,7 @@ public final class WeaponExplosiveCrossbow implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
-	public void onTickEnd(ServerTickEndEvent event) {
+	public void onTickStart(ServerTickStartEvent event) {
 		for (Projectile projectile : explosiveProjectiles) {
 			final World world = projectile.getWorld();
 			final Location location = projectile.getLocation()
