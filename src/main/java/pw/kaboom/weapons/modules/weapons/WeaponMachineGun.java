@@ -1,8 +1,11 @@
 package pw.kaboom.weapons.modules.weapons;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -14,6 +17,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -24,6 +28,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+import com.destroystokyo.paper.event.server.ServerTickStartEvent;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -31,7 +36,9 @@ import net.kyori.adventure.text.format.TextDecoration;
 import pw.kaboom.weapons.Main;
 
 public final class WeaponMachineGun implements Listener {
-    private static HashSet<UUID> machineGunActive = new HashSet<UUID>();
+
+    private static final int MAX_BULLET_COUNT = 20;
+    private static HashMap<UUID, Integer> machineGunActive = new HashMap<UUID, Integer>();
 
     public static void rightClick(final Material item, final Component name,
                                   final PlayerInteractEvent event) {
@@ -39,45 +46,9 @@ public final class WeaponMachineGun implements Listener {
                 .decoration(TextDecoration.ITALIC, false).equals(name)) {
             final UUID playerUUID = event.getPlayer().getUniqueId();
 
-            if (!machineGunActive.contains(playerUUID)) {
-                machineGunActive.add(playerUUID);
-                final int maxBulletCount = 20;
-
-                new BukkitRunnable() {
-                    private int i;
-
-                    @Override
-                    public void run() {
-                        final Player player = event.getPlayer();
-                        final Location eyeLocation = player.getEyeLocation();
-                        final World world = player.getWorld();
-                        final Vector velocity = eyeLocation.getDirection().multiply(12);
-
-                        final Arrow arrow = player.launchProjectile(Arrow.class);
-
-                        arrow.customName(Component.text("WeaponMachineGunBullet"));
-                        arrow.setShooter(player);
-                        arrow.setVelocity(velocity);
-
-                        final float volume = 1.0F;
-                        final float pitch = 63.0F;
-
-                        world.playSound(
-                            eyeLocation,
-                            Sound.ENTITY_GENERIC_EXPLODE,
-                            volume,
-                            pitch
-                        );
-
-                        i++;
-
-                        if (i >= maxBulletCount) {
-                            this.cancel();
-                        }
-                    }
-                }.runTaskTimer(JavaPlugin.getPlugin(Main.class), 0, 1);
-
-                machineGunActive.remove(playerUUID);
+            if (!machineGunActive.containsKey(playerUUID)) {
+                final int numFiredBullets = 0;
+                machineGunActive.put(playerUUID, numFiredBullets);
             }
             event.setCancelled(true);
         }
@@ -124,6 +95,48 @@ public final class WeaponMachineGun implements Listener {
 
             if (Component.text("WeaponMachineGunBullet").equals(projectile.customName())) {
                 projectile.remove();
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onTickStart(ServerTickStartEvent event) {
+        if (machineGunActive.isEmpty()) {
+            return;
+        }
+
+        Iterator<Entry<UUID, Integer>> iterator = machineGunActive.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            final Entry<UUID, Integer> entry = iterator.next();
+            final UUID playerUUID = entry.getKey();
+            int numFiredBullets = entry.getValue();
+
+            final Player player = Bukkit.getPlayer(playerUUID);
+            final Location eyeLocation = player.getEyeLocation();
+            final World world = player.getWorld();
+            final Vector velocity = eyeLocation.getDirection().multiply(12);
+
+            final Arrow arrow = player.launchProjectile(Arrow.class);
+
+            arrow.customName(Component.text("WeaponMachineGunBullet"));
+            arrow.setShooter(player);
+            arrow.setVelocity(velocity);
+
+            final float volume = 1.0F;
+            final float pitch = 63.0F;
+
+            world.playSound(
+                eyeLocation,
+                Sound.ENTITY_GENERIC_EXPLODE,
+                volume,
+                pitch
+            );
+
+            numFiredBullets++;
+
+            if (numFiredBullets >= MAX_BULLET_COUNT) {
+                iterator.remove();
             }
         }
     }
