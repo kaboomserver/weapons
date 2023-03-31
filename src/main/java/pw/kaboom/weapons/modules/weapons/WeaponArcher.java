@@ -11,10 +11,9 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.SpectralArrow;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
-
-import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -64,20 +63,25 @@ public final class WeaponArcher implements Listener {
 
     /* Make shooter invulnerable to weapon projectiles */
     @EventHandler
-    private void onProjectileCollide(final ProjectileCollideEvent event) {
-        if (event.getEntityType() == EntityType.SPECTRAL_ARROW) {
-            final Projectile projectile = event.getEntity();
+    private void onProjectileHit(final ProjectileHitEvent event) {
+        if (event.getEntityType() != EntityType.SPECTRAL_ARROW) {
+            return;
+        }
 
-            if (Component.text("WeaponArcherArrow").equals(projectile.customName())) {
-                final Entity collidedWith = event.getCollidedWith();
+        final Projectile projectile = event.getEntity();
 
-                if (collidedWith.getType() == EntityType.PLAYER
-                        && projectile.getShooter() instanceof Player
-                        && ((Player) projectile.getShooter()).getUniqueId().equals(
-                            collidedWith.getUniqueId())) {
-                    event.setCancelled(true);
-                }
-            }
+        if (!Component.text("WeaponArcherArrow").equals(projectile.customName())) {
+            return;
+        }
+
+        final Entity collidedWith = event.getHitEntity();
+
+        if (collidedWith != null
+                && collidedWith.getType() == EntityType.PLAYER
+                && projectile.getShooter() instanceof Player
+                && ((Player) projectile.getShooter()).getUniqueId().equals(
+                    collidedWith.getUniqueId())) {
+            event.setCancelled(true);
         }
     }
 }

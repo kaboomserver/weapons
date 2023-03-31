@@ -11,10 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
-
-import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -69,21 +68,29 @@ public final class WeaponArmageddon implements Listener {
     /* Make shooter invulnerable to weapon projectiles, and prevent charges from
     colliding with each other */
     @EventHandler
-    private void onProjectileCollide(final ProjectileCollideEvent event) {
-        if (event.getEntityType() == EntityType.FIREBALL) {
-            final Projectile projectile = event.getEntity();
+    private void onProjectileHit(final ProjectileHitEvent event) {
+        if (event.getEntityType() != EntityType.FIREBALL) {
+            return;
+        }
 
-            if (Component.text("WeaponArmegaddonCharge").equals(projectile.customName())) {
-                final Entity collidedWith = event.getCollidedWith();
+        final Projectile projectile = event.getEntity();
 
-                if ((collidedWith.getType() == EntityType.PLAYER
-                        && projectile.getShooter() instanceof Player
-                        && ((Player) projectile.getShooter()).getUniqueId().equals(
-                            collidedWith.getUniqueId()))
-                        || collidedWith.getType() == EntityType.FIREBALL) {
-                    event.setCancelled(true);
-                }
-            }
+        if (!Component.text("WeaponArmegaddonCharge").equals(projectile.customName())) {
+            return;
+        }
+
+        final Entity collidedWith = event.getHitEntity();
+
+        if (collidedWith == null) {
+            return;
+        }
+
+        if ((collidedWith.getType() == EntityType.PLAYER
+                && projectile.getShooter() instanceof Player
+                && ((Player) projectile.getShooter()).getUniqueId().equals(
+                    collidedWith.getUniqueId())) {
+                || collidedWith.getType() == EntityType.FIREBALL) {
+            event.setCancelled(true);
         }
     }
 }

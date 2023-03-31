@@ -25,7 +25,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
-import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import com.destroystokyo.paper.event.server.ServerTickStartEvent;
 
 import net.kyori.adventure.text.Component;
@@ -52,46 +51,45 @@ public final class WeaponMachineGun implements Listener {
 
     /* Make shooter invulnerable to weapon projectiles */
     @EventHandler
-    private void onProjectileCollide(final ProjectileCollideEvent event) {
-        if (event.getEntityType() == EntityType.ARROW) {
-            final Projectile projectile = event.getEntity();
-
-            if (Component.text("WeaponMachineGunBullet").equals(projectile.customName())) {
-                final Entity collidedWith = event.getCollidedWith();
-
-                if (collidedWith.getType() == EntityType.PLAYER
-                        && projectile.getShooter() instanceof Player
-                        && ((Player) projectile.getShooter()).getUniqueId().equals(
-                            collidedWith.getUniqueId())) {
-                    event.setCancelled(true);
-                } else if (collidedWith instanceof LivingEntity) {
-                    final int duration = 90000;
-                    final int amplifier = 3;
-                    final boolean ambient = true;
-                    final boolean particles = false;
-
-                    final PotionEffect harm = new PotionEffect(
-                        PotionEffectType.HARM,
-                        duration,
-                        amplifier,
-                        ambient,
-                        particles
-                    );
-
-                    ((LivingEntity) collidedWith).addPotionEffect(harm, true);
-                }
-            }
-        }
-    }
-
-    @EventHandler
     private void onProjectileHit(final ProjectileHitEvent event) {
-        if (event.getEntityType() == EntityType.ARROW) {
-            final Projectile projectile = event.getEntity();
+        if (event.getEntityType() != EntityType.ARROW) {
+            return;
+        }
 
-            if (Component.text("WeaponMachineGunBullet").equals(projectile.customName())) {
-                projectile.remove();
-            }
+        final Projectile projectile = event.getEntity();
+
+        if (!Component.text("WeaponMachineGunBullet").equals(projectile.customName())) {
+            return;
+        }
+
+        final Entity collidedWith = event.getHitEntity();
+        projectile.remove();
+
+        if (collidedWith == null) {
+            return;
+        }
+
+        if (collidedWith.getType() == EntityType.PLAYER
+                && projectile.getShooter() instanceof Player
+                && ((Player) projectile.getShooter()).getUniqueId().equals(
+                    collidedWith.getUniqueId())) {
+            event.setCancelled(true);
+
+        } else if (collidedWith instanceof LivingEntity) {
+            final int duration = 90000;
+            final int amplifier = 3;
+            final boolean ambient = true;
+            final boolean particles = false;
+
+            final PotionEffect harm = new PotionEffect(
+                PotionEffectType.HARM,
+                duration,
+                amplifier,
+                ambient,
+                particles
+            );
+
+            ((LivingEntity) collidedWith).addPotionEffect(harm, true);
         }
     }
 
@@ -111,6 +109,7 @@ public final class WeaponMachineGun implements Listener {
 
             if (player == null) {
                 iterator.remove();
+                continue;
             }
 
             final Location eyeLocation = player.getEyeLocation();
