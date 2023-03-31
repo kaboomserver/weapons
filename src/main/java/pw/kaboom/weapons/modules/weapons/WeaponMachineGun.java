@@ -106,9 +106,13 @@ public final class WeaponMachineGun implements Listener {
         while (iterator.hasNext()) {
             final Entry<UUID, Integer> entry = iterator.next();
             final UUID playerUUID = entry.getKey();
+            final Player player = Bukkit.getPlayer(playerUUID);
             int numFiredBullets = entry.getValue();
 
-            final Player player = Bukkit.getPlayer(playerUUID);
+            if (player == null) {
+                iterator.remove();
+            }
+
             final Location eyeLocation = player.getEyeLocation();
             final World world = player.getWorld();
             final Vector velocity = eyeLocation.getDirection().multiply(12);
@@ -130,6 +134,7 @@ public final class WeaponMachineGun implements Listener {
             );
 
             numFiredBullets++;
+            machineGunActive.put(playerUUID, numFiredBullets);
 
             if (numFiredBullets >= MAX_BULLET_COUNT) {
                 iterator.remove();
