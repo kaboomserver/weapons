@@ -21,10 +21,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
@@ -32,8 +30,6 @@ import com.destroystokyo.paper.event.server.ServerTickStartEvent;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
-
-import pw.kaboom.weapons.Main;
 
 public final class WeaponMachineGun implements Listener {
 
