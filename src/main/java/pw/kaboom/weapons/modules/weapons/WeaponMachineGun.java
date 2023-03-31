@@ -89,7 +89,7 @@ public final class WeaponMachineGun implements Listener {
                 particles
             );
 
-            ((LivingEntity) collidedWith).addPotionEffect(harm, true);
+            ((LivingEntity) collidedWith).addPotionEffect(harm);
         }
     }
 

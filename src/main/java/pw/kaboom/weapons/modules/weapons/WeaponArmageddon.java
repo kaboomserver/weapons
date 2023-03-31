@@ -44,7 +44,6 @@ public final class WeaponArmageddon implements Listener {
                     EntityType.FIREBALL
                 );
 
-                fireball.setBounce(false);
                 fireball.customName(Component.text("WeaponArmegaddonCharge"));
                 fireball.setDirection(velocity);
                 fireball.setShooter(player);
