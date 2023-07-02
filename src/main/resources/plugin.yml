@@ -1,12 +1,12 @@
 name: Weapons
 main: pw.kaboom.weapons.Main
 description: Plugin that implements various kinds of weapons.
-api-version: 1.13
+api-version: '1.20'
 version: master
 folia-supported: true
 
 commands:
    weapons:
-      aliases: weapon
+      aliases: [ weapon ]
       description: Gives you a weapon
       permission: weapons.command
