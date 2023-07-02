@@ -18,8 +18,6 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
-import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 
@@ -73,17 +71,6 @@ public final class WeaponBlobinator implements Listener {
     }
 
     @EventHandler
-    private void onProjectileCollide(final ProjectileCollideEvent event) {
-        if (event.getEntityType() == EntityType.SNOWBALL) {
-            final Projectile projectile = event.getEntity();
-
-            if (Component.text("WeaponBlobinatorBall").equals(projectile.customName())) {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
     private void onProjectileHit(final ProjectileHitEvent event) {
         if (event.getEntityType() == EntityType.SNOWBALL) {
             final Block hitBlock = event.getHitBlock();
@@ -103,6 +90,8 @@ public final class WeaponBlobinator implements Listener {
                         }
                     }
                 }
+                
+                event.setCancelled(true);
             }
         }
     }
