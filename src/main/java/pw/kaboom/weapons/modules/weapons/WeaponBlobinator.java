@@ -76,21 +76,21 @@ public final class WeaponBlobinator implements Listener {
             final Block hitBlock = event.getHitBlock();
             final Projectile projectile = event.getEntity();
 
-            if (hitBlock != null
-                    && Component.text("WeaponBlobinatorBall").equals(projectile.customName())) {
-                final int radius = 4;
-                final World world = projectile.getWorld();
-                final Material color = Main.getColors().get(
-                    ThreadLocalRandom.current().nextInt(Main.getColors().size()));
+            if (Component.text("WeaponBlobinatorBall").equals(projectile.customName())) {
+                if (hitBlock != null) {
+                    final int radius = 4;
+                    final World world = projectile.getWorld();
+                    final Material color = Main.getColors().get(
+                        ThreadLocalRandom.current().nextInt(Main.getColors().size()));
 
-                for (int x = -radius; x < radius; x++) {
-                    for (int y = -radius; y < radius; y++) {
-                        for (int z = -radius; z < radius; z++) {
-                            createBlobSplash(world, x, y, z, radius, hitBlock, color);
+                    for (int x = -radius; x < radius; x++) {
+                        for (int y = -radius; y < radius; y++) {
+                            for (int z = -radius; z < radius; z++) {
+                                createBlobSplash(world, x, y, z, radius, hitBlock, color);
+                            }
                         }
                     }
                 }
-                
                 event.setCancelled(true);
             }
         }
