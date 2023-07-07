@@ -18,8 +18,6 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
-import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 
@@ -73,36 +71,27 @@ public final class WeaponBlobinator implements Listener {
     }
 
     @EventHandler
-    private void onProjectileCollide(final ProjectileCollideEvent event) {
-        if (event.getEntityType() == EntityType.SNOWBALL) {
-            final Projectile projectile = event.getEntity();
-
-            if (Component.text("WeaponBlobinatorBall").equals(projectile.customName())) {
-                event.setCancelled(true);
-            }
-        }
-    }
-
-    @EventHandler
     private void onProjectileHit(final ProjectileHitEvent event) {
         if (event.getEntityType() == EntityType.SNOWBALL) {
             final Block hitBlock = event.getHitBlock();
             final Projectile projectile = event.getEntity();
 
-            if (hitBlock != null
-                    && Component.text("WeaponBlobinatorBall").equals(projectile.customName())) {
-                final int radius = 4;
-                final World world = projectile.getWorld();
-                final Material color = Main.getColors().get(
-                    ThreadLocalRandom.current().nextInt(Main.getColors().size()));
+            if (Component.text("WeaponBlobinatorBall").equals(projectile.customName())) {
+                if (hitBlock != null) {
+                    final int radius = 4;
+                    final World world = projectile.getWorld();
+                    final Material color = Main.getColors().get(
+                        ThreadLocalRandom.current().nextInt(Main.getColors().size()));
 
-                for (int x = -radius; x < radius; x++) {
-                    for (int y = -radius; y < radius; y++) {
-                        for (int z = -radius; z < radius; z++) {
-                            createBlobSplash(world, x, y, z, radius, hitBlock, color);
+                    for (int x = -radius; x < radius; x++) {
+                        for (int y = -radius; y < radius; y++) {
+                            for (int z = -radius; z < radius; z++) {
+                                createBlobSplash(world, x, y, z, radius, hitBlock, color);
+                            }
                         }
                     }
                 }
+                event.setCancelled(true);
             }
         }
     }
