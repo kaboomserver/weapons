@@ -11,7 +11,7 @@ public class WeaponItemBuilder {
 	private final ItemStack itemStack;
 	private final ItemMeta itemMeta;
 
-	private WeaponItemBuilder(Material material) {
+	private WeaponItemBuilder(final Material material) {
 		this.itemStack = new ItemStack(material);
 		this.itemMeta = this.itemStack.getItemMeta();
 	}

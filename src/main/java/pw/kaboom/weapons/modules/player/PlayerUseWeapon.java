@@ -28,7 +28,7 @@ public final class PlayerUseWeapon implements Listener {
             return;
         }
 
-        Component name = Component.empty();
+        Component name;
 
         try {
             name = event.getItem().getItemMeta().displayName();
@@ -39,8 +39,7 @@ public final class PlayerUseWeapon implements Listener {
         final Action action = event.getAction();
         final Material item = event.getMaterial();
 
-        if (action == Action.LEFT_CLICK_AIR
-                || action == Action.LEFT_CLICK_BLOCK) {
+        if (action.isLeftClick()) {
             WeaponAnvilDropper.leftClick(item, name, event);
             WeaponArcher.leftClick(item, name, event);
             WeaponArmageddon.leftClick(item, name, event);
@@ -48,8 +47,7 @@ public final class PlayerUseWeapon implements Listener {
             WeaponLightningStick.leftClick(item, name, event);
             WeaponNuker.leftClick(item, name, event);
             WeaponSniper.leftClick(item, name, event);
-        } else if (action == Action.RIGHT_CLICK_AIR
-                || action == Action.RIGHT_CLICK_BLOCK) {
+        } else if (action.isRightClick()) {
             WeaponGrenade.rightClick(item, name, event);
             WeaponLaser.rightClick(item, name, event);
             WeaponMachineGun.rightClick(item, name, event);

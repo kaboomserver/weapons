@@ -1,7 +1,7 @@
 package pw.kaboom.weapons.modules.player;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -42,8 +42,7 @@ public final class PlayerReceiveWeapon implements Listener {
             return;
         }
 
-        final Player player = (Player) event.getWhoClicked();
-
+        final HumanEntity player = event.getWhoClicked();
         player.getInventory().addItem(item);
         player.closeInventory();
         player.sendMessage(
