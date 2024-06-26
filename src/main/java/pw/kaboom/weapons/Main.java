@@ -1,83 +1,64 @@
 package pw.kaboom.weapons;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
+import net.kyori.adventure.text.Component;
+import org.bukkit.NamespacedKey;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import pw.kaboom.weapons.commands.CommandWeapons;
-import pw.kaboom.weapons.modules.player.PlayerReceiveWeapon;
-import pw.kaboom.weapons.modules.player.PlayerUseWeapon;
-import pw.kaboom.weapons.modules.weapons.WeaponArcher;
-import pw.kaboom.weapons.modules.weapons.WeaponArmageddon;
-import pw.kaboom.weapons.modules.weapons.WeaponBlobinator;
-import pw.kaboom.weapons.modules.weapons.WeaponExplosiveCrossbow;
-import pw.kaboom.weapons.modules.weapons.WeaponGrenade;
-import pw.kaboom.weapons.modules.weapons.WeaponMachineGun;
+import pw.kaboom.weapons.modules.PlayerReceiveWeapon;
+import pw.kaboom.weapons.projectiles.*;
+import pw.kaboom.weapons.weapon.WeaponManager;
+import pw.kaboom.weapons.projectile.ProjectileManager;
+import pw.kaboom.weapons.weapons.*;
+
+import java.util.Random;
 
 public final class Main extends JavaPlugin {
-    private static final HashSet<BlockFace> blockFaces = new HashSet<BlockFace>();
-    private static final List<Material> colors = new ArrayList<Material>();
+    public static final Random RANDOM = new Random();
+    private final ProjectileManager projectileManager =
+            new ProjectileManager(key("projectile"));
+    private final WeaponManager weaponManager =
+            new WeaponManager(key("weapon"), Component.text("Weapons"));
 
     @Override
     public void onLoad() {
-        /* Fill lists */
-        Collections.addAll(
-            blockFaces,
-            BlockFace.NORTH,
-            BlockFace.SOUTH,
-            BlockFace.WEST,
-            BlockFace.EAST,
-            BlockFace.UP,
-            BlockFace.DOWN
-        );
+        // Projectiles
+        projectileManager.add(key("archer_arrow"), new ArcherArrow());
+        projectileManager.add(key("armageddon_charge"), new ArmageddonCharge());
+        projectileManager.add(key("blobinator_ball"), new BlobinatorBall());
+        projectileManager.add(key("explosive_arrow"), new ExplosiveArrow());
+        projectileManager.add(key("grenade"), new Grenade());
 
-        Collections.addAll(
-            colors,
-            Material.BLACK_WOOL,
-            Material.BLUE_WOOL,
-            Material.BROWN_WOOL,
-            Material.CYAN_WOOL,
-            Material.GRAY_WOOL,
-            Material.GREEN_WOOL,
-            Material.LIGHT_BLUE_WOOL,
-            Material.LIGHT_GRAY_WOOL,
-            Material.LIME_WOOL,
-            Material.MAGENTA_WOOL,
-            Material.ORANGE_WOOL,
-            Material.PINK_WOOL,
-            Material.PURPLE_WOOL,
-            Material.RED_WOOL,
-            Material.WHITE_WOOL,
-            Material.YELLOW_WOOL
-        );
+        // Weapons
+        weaponManager.add(key("anvil_dropper"), new WeaponAnvilDropper());
+        weaponManager.add(key("archer"), new WeaponArcher(projectileManager, key("archer_arrow")));
+        weaponManager.add(key("armageddon"),
+                new WeaponArmageddon(projectileManager, key("armageddon_charge")));
+        weaponManager.add(key("blobinator"),
+                new WeaponBlobinator(projectileManager, key("blobinator_ball")));
+        weaponManager.add(key("explosive_crossbow"),
+                new WeaponExplosiveCrossbow(projectileManager, key("explosive_arrow")));
+        weaponManager.add(key("grenade"),
+                new WeaponGrenade(projectileManager, key("grenade")));
+        weaponManager.add(key("laser"), new WeaponLaser());
+        weaponManager.add(key("lightning_stick"), new WeaponLightningStick());
+        weaponManager.add(key("sniper"), new WeaponSniper());
     }
 
     @Override
     public void onEnable() {
-        /* Commands */
-        this.getCommand("weapons").setExecutor(new CommandWeapons());
+        // Modules
+        final PluginManager pluginManager = this.getServer().getPluginManager();
+        pluginManager.registerEvents(projectileManager, this);
+        pluginManager.registerEvents(weaponManager, this);
+        pluginManager.registerEvents(new PlayerReceiveWeapon(weaponManager), this);
 
-        /* Player Events */
-        this.getServer().getPluginManager().registerEvents(new PlayerReceiveWeapon(), this);
-        this.getServer().getPluginManager().registerEvents(new PlayerUseWeapon(), this);
-
-        /* Weapon Events */
-        this.getServer().getPluginManager().registerEvents(new WeaponArcher(), this);
-        this.getServer().getPluginManager().registerEvents(new WeaponArmageddon(), this);
-        this.getServer().getPluginManager().registerEvents(new WeaponBlobinator(), this);
-        this.getServer().getPluginManager().registerEvents(new WeaponGrenade(), this);
-        this.getServer().getPluginManager().registerEvents(new WeaponMachineGun(), this);
-        this.getServer().getPluginManager().registerEvents(new WeaponExplosiveCrossbow(), this);
+        // Commands
+        //noinspection DataFlowIssue
+        this.getCommand("weapons").setExecutor(new CommandWeapons(weaponManager));
     }
 
-    public static HashSet<BlockFace> getBlockFaces() {
-        return blockFaces;
-    }
-
-    public static List<Material> getColors() {
-        return colors;
+    private static NamespacedKey key(final String key) {
+        return new NamespacedKey("kaboom", key);
     }
 }

@@ -1,36 +1,24 @@
-package pw.kaboom.weapons.modules.weapons;
+package pw.kaboom.weapons.weapons;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
-
-import com.destroystokyo.paper.event.server.ServerTickStartEvent;
+import org.bukkit.inventory.ItemStack;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.NotNull;
+import pw.kaboom.weapons.weapon.Weapon;
+import pw.kaboom.weapons.weapon.WeaponItemBuilder;
 
-public final class WeaponMachineGun implements Listener {
+public final class WeaponMachineGun implements Weapon {
+    public @NotNull ItemStack item() {
+        return WeaponItemBuilder.builder(Material.GOLDEN_HORSE_ARMOR)
+                .name("Machine Gun")
+                .build();
+    }
 
     private static final int MAX_BULLET_COUNT = 20;
     private static HashMap<UUID, Integer> machineGunActive = new HashMap<UUID, Integer>();
@@ -49,7 +37,7 @@ public final class WeaponMachineGun implements Listener {
         }
     }
 
-    /* Make shooter invulnerable to weapon projectiles */
+    /* Make shooter invulnerable to weapon projectiles
     @EventHandler
     private void onProjectileHit(final ProjectileHitEvent event) {
         if (event.getEntityType() != EntityType.ARROW) {
@@ -140,5 +128,5 @@ public final class WeaponMachineGun implements Listener {
                 iterator.remove();
             }
         }
-    }
+    }*/
 }

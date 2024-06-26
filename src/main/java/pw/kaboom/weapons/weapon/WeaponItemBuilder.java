@@ -1,4 +1,4 @@
-package pw.kaboom.weapons;
+package pw.kaboom.weapons.weapon;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -11,22 +11,22 @@ public class WeaponItemBuilder {
 	private final ItemStack itemStack;
 	private final ItemMeta itemMeta;
 
-	private WeaponItemBuilder(final Material material) {
-		this.itemStack = new ItemStack(material);
+	private WeaponItemBuilder(final ItemStack itemStack) {
+		this.itemStack = itemStack;
 		this.itemMeta = this.itemStack.getItemMeta();
 	}
 
-	public WeaponItemBuilder enchantment(Enchantment enchantment) {
+	public WeaponItemBuilder enchantment(final Enchantment enchantment) {
 		return enchantment(enchantment, enchantment.getStartLevel());
 	}
 
-	public WeaponItemBuilder enchantment(Enchantment enchantment, int level) {
+	public WeaponItemBuilder enchantment(final Enchantment enchantment, final int level) {
 		this.itemMeta.addEnchant(enchantment, level, true);
 
 		return this;
 	}
 
-	public WeaponItemBuilder name(String name) {
+	public WeaponItemBuilder name(final String name) {
 		final Component component = Component.text(name)
 			.decoration(TextDecoration.ITALIC, false);
 		this.itemMeta.displayName(component);
@@ -34,8 +34,12 @@ public class WeaponItemBuilder {
 		return this;
 	}
 
-	public static WeaponItemBuilder builder(Material material) {
-		return new WeaponItemBuilder(material);
+	public static WeaponItemBuilder builder(final ItemStack itemStack) {
+		return new WeaponItemBuilder(itemStack);
+	}
+
+	public static WeaponItemBuilder builder(final Material material) {
+		return new WeaponItemBuilder(new ItemStack(material));
 	}
 
 	public ItemStack build() {
@@ -43,5 +47,4 @@ public class WeaponItemBuilder {
 
 		return this.itemStack;
 	}
-
 }

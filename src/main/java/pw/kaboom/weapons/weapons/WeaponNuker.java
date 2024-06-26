@@ -1,4 +1,4 @@
-package pw.kaboom.weapons.modules.weapons;
+package pw.kaboom.weapons.weapons;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -7,13 +7,20 @@ import org.bukkit.World;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.jetbrains.annotations.NotNull;
+import pw.kaboom.weapons.weapon.Weapon;
+import pw.kaboom.weapons.weapon.WeaponItemBuilder;
 
-public final class WeaponNuker {
-    private WeaponNuker() {
+public final class WeaponNuker implements Weapon {
+    public @NotNull ItemStack item() {
+        return WeaponItemBuilder.builder(Material.BLAZE_ROD)
+                .name("Nuker")
+                .build();
     }
 
     public static void leftClick(final Material item, final Component name,
