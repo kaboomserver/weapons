@@ -11,6 +11,7 @@ import pw.kaboom.weapons.Main;
 import pw.kaboom.weapons.WeaponMenuHolder;
 import pw.kaboom.weapons.modules.weapons.Weapon;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.papermc.paper.command.brigadier.Commands.literal;
@@ -28,6 +29,10 @@ public final class CommandWeapons {
 
     public String getDescription() {
         return "Gives you a weapon";
+    }
+
+    public List<String> getAliases() {
+        return List.of("weapon");
     }
 
     public void build(final LiteralArgumentBuilder<CommandSourceStack> builder) {

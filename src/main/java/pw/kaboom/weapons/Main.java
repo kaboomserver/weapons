@@ -66,7 +66,7 @@ public final class Main extends JavaPlugin {
                     = Commands.literal(command.getLabel());
             command.build(builder);
             registrar.register(
-                    builder.build(), command.getDescription()
+                    builder.build(), command.getDescription(), command.getAliases()
             );
         });
 
