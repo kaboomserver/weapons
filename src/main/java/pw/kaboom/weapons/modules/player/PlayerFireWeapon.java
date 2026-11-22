@@ -59,6 +59,7 @@ public final class PlayerFireWeapon implements Listener {
                     event.setCancelled(true);
                 }
             }
+            break;
         }
     }
 }
