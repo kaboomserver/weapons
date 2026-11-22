@@ -16,7 +16,10 @@ import java.util.Map;
 import static io.papermc.paper.command.brigadier.Commands.literal;
 
 public final class CommandWeapons {
-    public CommandWeapons() {
+    private final Main plugin;
+
+    public CommandWeapons(final Main plugin) {
+        this.plugin = plugin;
     }
 
     public String getLabel() {
@@ -32,7 +35,7 @@ public final class CommandWeapons {
                 .requires(src -> src.getSender().hasPermission("weapons.command"))
                 .executes(this::handleCommand);
 
-        for (final Map.Entry<String, Weapon> weapon : Main.getWeapons().entrySet()) {
+        for (final Map.Entry<String, Weapon> weapon : plugin.getWeapons().entrySet()) {
             builder.then(literal(weapon.getKey())
                     .executes(ctx -> {
                         final Player sender = ctx.getSource().getPlayerOrThrow();
@@ -48,7 +51,7 @@ public final class CommandWeapons {
         final Player sender = ctx.getSource().getPlayerOrThrow();
 
         final Inventory inventory = new WeaponMenuHolder().getInventory();
-        for (final Weapon weapon : Main.getWeapons().values()) {
+        for (final Weapon weapon : plugin.getWeapons().values()) {
             inventory.addItem(weapon.getItemStack());
         }
         sender.openInventory(inventory);

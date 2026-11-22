@@ -14,6 +14,12 @@ import pw.kaboom.weapons.modules.weapons.Weapon;
 import java.util.List;
 
 public final class PlayerFireWeapon implements Listener {
+    private final Main plugin;
+
+    public PlayerFireWeapon(final Main plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler
     private void onPlayerInteract(final PlayerInteractEvent event) {
         if ((event.useInteractedBlock() == Event.Result.DENY
@@ -38,7 +44,7 @@ public final class PlayerFireWeapon implements Listener {
         }
 
         for (final String key : keys) {
-            final Weapon weapon = Main.getWeapons().get(key);
+            final Weapon weapon = plugin.getWeapons().get(key);
 
             if (weapon == null) {
                 continue;

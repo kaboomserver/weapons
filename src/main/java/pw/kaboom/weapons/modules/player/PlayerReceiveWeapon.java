@@ -15,6 +15,12 @@ import pw.kaboom.weapons.WeaponMenuHolder;
 import java.util.List;
 
 public final class PlayerReceiveWeapon implements Listener {
+    private final Main plugin;
+
+    public PlayerReceiveWeapon(final Main plugin) {
+        this.plugin = plugin;
+    }
+
     @EventHandler
     private void onInventoryClick(final InventoryClickEvent event) {
         final InventoryView view = event.getView();
@@ -36,7 +42,7 @@ public final class PlayerReceiveWeapon implements Listener {
         final List<String> keys = item.getItemMeta().getPersistentDataContainer()
                 .get(Main.getPdcKey(), PersistentDataType.LIST.strings());
 
-        if (keys == null || keys.stream().noneMatch(Main.getWeapons()::containsKey)) {
+        if (keys == null || keys.stream().noneMatch(plugin.getWeapons()::containsKey)) {
             return;
         }
 

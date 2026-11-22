@@ -20,9 +20,37 @@ import org.bukkit.util.Vector;
 import pw.kaboom.weapons.Main;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class WeaponBlobinator implements Weapon, Listener {
+    private static final Set<BlockFace> BLOCK_FACES = Set.of(
+            BlockFace.NORTH,
+            BlockFace.SOUTH,
+            BlockFace.WEST,
+            BlockFace.EAST,
+            BlockFace.UP,
+            BlockFace.DOWN
+
+    );
+    private static final List<Material> COLORS = List.of(
+            Material.BLACK_WOOL,
+            Material.BLUE_WOOL,
+            Material.BROWN_WOOL,
+            Material.CYAN_WOOL,
+            Material.GRAY_WOOL,
+            Material.GREEN_WOOL,
+            Material.LIGHT_BLUE_WOOL,
+            Material.LIGHT_GRAY_WOOL,
+            Material.LIME_WOOL,
+            Material.MAGENTA_WOOL,
+            Material.ORANGE_WOOL,
+            Material.PINK_WOOL,
+            Material.PURPLE_WOOL,
+            Material.RED_WOOL,
+            Material.WHITE_WOOL,
+            Material.YELLOW_WOOL
+    );
     private static final int RADIUS = 4;
 
     @Override
@@ -71,7 +99,7 @@ public final class WeaponBlobinator implements Weapon, Listener {
 
             if (block.getType() != Material.AIR
                     && block.getType() != Material.CAVE_AIR) {
-                for (final BlockFace face : Main.getBlockFaces()) {
+                for (final BlockFace face : BLOCK_FACES) {
                     if (block.getRelative(face).getType() == Material.AIR
                             || block.getRelative(face).getType() == Material.CAVE_AIR) {
                         block.setType(color);
@@ -96,8 +124,7 @@ public final class WeaponBlobinator implements Weapon, Listener {
 
         if (hitBlock != null) {
             final World world = projectile.getWorld();
-            final Material color = Main.getColors().get(
-                    ThreadLocalRandom.current().nextInt(Main.getColors().size()));
+            final Material color = COLORS.get(ThreadLocalRandom.current().nextInt(COLORS.size()));
 
             for (int x = -RADIUS; x < RADIUS; x++) {
                 for (int y = -RADIUS; y < RADIUS; y++) {
