@@ -1,5 +1,6 @@
 package pw.kaboom.weapons.modules.weapons;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -12,53 +13,67 @@ import org.bukkit.entity.SpectralArrow;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import pw.kaboom.weapons.Main;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
-public final class WeaponArcher implements Listener {
-    public static void leftClick(final Material item, final Component name,
-                                 final PlayerInteractEvent event) {
-        if (item == Material.SPECTRAL_ARROW && Component.text("Archer")
-                .decoration(TextDecoration.ITALIC, false).equals(name)) {
-            final Player player = event.getPlayer();
-            final World world = player.getWorld();
+public final class WeaponArcher implements Weapon, Listener {
+    private static final int ARROW_COUNT = 20;
+    private static final int SPREAD = 15;
+    private static final double ARROW_SPEED = 8;
+    private static final Component ARROW_NAME = Component.text("WeaponArcherArrow");
 
-            final int maxArrowCount = 20;
+    @Override
+    public String getKey() {
+        return "archer";
+    }
 
-            for (int i = 0; i <= maxArrowCount; i++) {
-                final double randomX = (Math.random() * ((15 + 15) + 1)) - 15;
-                final double randomY = (Math.random() * ((15 + 15) + 1)) - 15;
-                final double randomZ = (Math.random() * ((15 + 15) + 1)) - 15;
+    @Override
+    public ItemStack getItemStack() {
+        final ItemStack weapon = ItemStack.of(Material.SPECTRAL_ARROW);
+        weapon.editMeta(meta -> {
+            meta.displayName(Component.text("Archer"));
+            meta.getPersistentDataContainer().set(
+                    Main.getPdcKey(),
+                    PersistentDataType.LIST.strings(),
+                    List.of(getKey())
+            );
+        });
+        return weapon;
+    }
 
-                final Vector randomDirection = new Vector(
-                    randomX,
-                    randomY,
-                    randomZ).normalize().multiply(8);
+    @Override
+    public boolean leftClick(final Player player) {
+        final World world = player.getWorld();
+        final ThreadLocalRandom random = ThreadLocalRandom.current();
 
-                final SpectralArrow arrow = (SpectralArrow) world.spawnEntity(
+        for (int i = 0; i <= ARROW_COUNT; i++) {
+            final double randomX = random.nextDouble(-SPREAD, SPREAD);
+            final double randomY = random.nextDouble(-SPREAD, SPREAD);
+            final double randomZ = random.nextDouble(-SPREAD, SPREAD);
+
+            final Vector randomDirection = new Vector(randomX, randomY, randomZ)
+                    .normalize().multiply(ARROW_SPEED);
+
+            final SpectralArrow arrow = (SpectralArrow) world.spawnEntity(
                     player.getLocation(),
                     EntityType.SPECTRAL_ARROW
-                );
-                arrow.customName(Component.text("WeaponArcherArrow"));
-                arrow.setShooter(player);
-                arrow.setVelocity(randomDirection);
-            }
-
-            final Location eyeLocation = player.getEyeLocation();
-            final float volume = 1.0F;
-            final float pitch = 1.5F;
-
-            world.playSound(
-                eyeLocation,
-                Sound.BLOCK_ANVIL_DESTROY,
-                volume,
-                pitch
             );
-            event.setCancelled(true);
+            arrow.customName(ARROW_NAME);
+            arrow.setShooter(player);
+            arrow.setVelocity(randomDirection);
         }
+
+        final Location eyeLocation = player.getEyeLocation();
+        final float volume = 1.0F;
+        final float pitch = 1.5F;
+
+        world.playSound(eyeLocation, Sound.BLOCK_ANVIL_DESTROY, volume, pitch);
+        return true;
     }
 
     /* Make shooter invulnerable to weapon projectiles */
@@ -70,7 +85,7 @@ public final class WeaponArcher implements Listener {
 
         final Projectile projectile = event.getEntity();
 
-        if (!Component.text("WeaponArcherArrow").equals(projectile.customName())) {
+        if (!ARROW_NAME.equals(projectile.customName())) {
             return;
         }
 
@@ -80,7 +95,7 @@ public final class WeaponArcher implements Listener {
                 && collidedWith.getType() == EntityType.PLAYER
                 && projectile.getShooter() instanceof Player
                 && ((Player) projectile.getShooter()).getUniqueId().equals(
-                    collidedWith.getUniqueId())) {
+                collidedWith.getUniqueId())) {
             event.setCancelled(true);
         }
     }

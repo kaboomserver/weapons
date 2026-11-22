@@ -1,67 +1,76 @@
 package pw.kaboom.weapons.modules.weapons;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
+import pw.kaboom.weapons.Main;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.List;
 
-public final class WeaponArmageddon implements Listener {
-    public static void leftClick(final Material item, final Component name,
-                                 final PlayerInteractEvent event) {
-        if (item == Material.FIRE_CHARGE && Component.text("Armageddon")
-                .decoration(TextDecoration.ITALIC, false).equals(name)) {
-            final Player player = event.getPlayer();
-            final World world = player.getWorld();
+public final class WeaponArmageddon implements Weapon, Listener {
+    private static final int MIN = -12;
+    private static final int MAX = 12;
+    private static final int SPACING = 4;
+    private static final int YIELD = 5;
+    private static final double FIREBALL_SPEED = 12;
 
-            final int min = -12;
-            final int max = 12;
-            final int iteratorSpacing = 4;
+    @Override
+    public String getKey() {
+        return "armageddon";
+    }
 
-            for (int i = min; i <= max; i += iteratorSpacing) {
-                final Location eyeLocation = player.getEyeLocation();
-
-                final double x = i * Math.cos(Math.toRadians(eyeLocation.getYaw()));
-                final double z = i * Math.sin(Math.toRadians(eyeLocation.getYaw()));
-
-                final Vector velocity = eyeLocation.getDirection().multiply(12);
-                final int yield = 5;
-
-                final Fireball fireball = (Fireball) world.spawnEntity(
-                    eyeLocation.add(x, 0, z),
-                    EntityType.FIREBALL
-                );
-
-                fireball.customName(Component.text("WeaponArmegaddonCharge"));
-                fireball.setDirection(velocity);
-                fireball.setShooter(player);
-                fireball.setYield(yield);
-            }
-
-            final Location eyeLocation = player.getEyeLocation();
-            final float volume = 0.9F;
-            final float pitch = 1.5F;
-
-            world.playSound(
-                eyeLocation,
-                Sound.ENTITY_GHAST_SHOOT,
-                volume,
-                pitch
+    @Override
+    public ItemStack getItemStack() {
+        final ItemStack weapon = ItemStack.of(Material.FIRE_CHARGE);
+        weapon.editMeta(meta -> {
+            meta.displayName(Component.text("Armageddon"));
+            meta.getPersistentDataContainer().set(
+                    Main.getPdcKey(),
+                    PersistentDataType.LIST.strings(),
+                    List.of(getKey())
             );
-            event.setCancelled(true);
+        });
+        return weapon;
+    }
+
+    @Override
+    public boolean leftClick(final Player player) {
+        final World world = player.getWorld();
+
+        for (int i = MIN; i <= MAX; i += SPACING) {
+            final Location eyeLocation = player.getEyeLocation();
+
+            final double x = i * Math.cos(Math.toRadians(eyeLocation.getYaw()));
+            final double z = i * Math.sin(Math.toRadians(eyeLocation.getYaw()));
+
+            final Vector velocity = eyeLocation.getDirection().multiply(FIREBALL_SPEED);
+
+            final Fireball fireball = world.spawn(
+                    eyeLocation.add(x, 0, z),
+                    Fireball.class
+            );
+
+            fireball.customName(Component.text("WeaponArmageddonCharge"));
+            fireball.setDirection(velocity);
+            fireball.setShooter(player);
+            fireball.setYield(YIELD);
         }
+
+        final Location eyeLocation = player.getEyeLocation();
+        final float volume = 0.9F;
+        final float pitch = 1.5F;
+
+        world.playSound(eyeLocation, Sound.ENTITY_GHAST_SHOOT, volume, pitch);
+        return true;
     }
 
     /* Make shooter invulnerable to weapon projectiles, and prevent charges from
@@ -74,7 +83,7 @@ public final class WeaponArmageddon implements Listener {
 
         final Projectile projectile = event.getEntity();
 
-        if (!Component.text("WeaponArmegaddonCharge").equals(projectile.customName())) {
+        if (!Component.text("WeaponArmageddonCharge").equals(projectile.customName())) {
             return;
         }
 
@@ -87,8 +96,8 @@ public final class WeaponArmageddon implements Listener {
         if ((collidedWith.getType() == EntityType.PLAYER
                 && projectile.getShooter() instanceof Player
                 && ((Player) projectile.getShooter()).getUniqueId().equals(
-                    collidedWith.getUniqueId()))
-                || collidedWith.getType() == EntityType.FIREBALL) {
+                collidedWith.getUniqueId()
+        )) || collidedWith.getType() == EntityType.FIREBALL) {
             event.setCancelled(true);
         }
     }

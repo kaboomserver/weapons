@@ -1,5 +1,6 @@
 package pw.kaboom.weapons.modules.weapons;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -12,36 +13,48 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerEggThrowEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
+import pw.kaboom.weapons.Main;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.List;
 
-public final class WeaponGrenade implements Listener {
-    public static void rightClick(final Material item, final Component name,
-                                  final PlayerInteractEvent event) {
-        if (item == Material.EGG && Component.text("Grenade")
-                .decoration(TextDecoration.ITALIC, false).equals(name)) {
-            event.setCancelled(true);
+public final class WeaponGrenade implements Weapon, Listener {
+    private static final float EXPLOSION_POWER = 6;
 
-            final Player player = event.getPlayer();
-            final Location eyeLocation = player.getEyeLocation();
+    @Override
+    public String getKey() {
+        return "grenade";
+    }
 
-            final Egg egg = player.launchProjectile(Egg.class);
-            egg.customName(Component.text("WeaponGrenade"));
-            egg.setShooter(player);
-
-            final World world = player.getWorld();
-            final float volume = 1.0F;
-            final float pitch = 1.0F;
-
-            world.playSound(
-                eyeLocation,
-                Sound.ENTITY_EGG_THROW,
-                volume,
-                pitch
+    @Override
+    public ItemStack getItemStack() {
+        final ItemStack weapon = ItemStack.of(Material.EGG);
+        weapon.editMeta(meta -> {
+            meta.displayName(Component.text("Grenade"));
+            meta.getPersistentDataContainer().set(
+                    Main.getPdcKey(),
+                    PersistentDataType.LIST.strings(),
+                    List.of(getKey())
             );
-        }
+        });
+        return weapon;
+    }
+
+    @Override
+    public boolean rightClick(final Player player) {
+        final Location eyeLocation = player.getEyeLocation();
+
+        final Egg egg = player.launchProjectile(Egg.class);
+        egg.customName(Component.text("WeaponGrenade"));
+        egg.setShooter(player);
+
+        final World world = player.getWorld();
+        final float volume = 1.0F;
+        final float pitch = 1.0F;
+
+        world.playSound(eyeLocation, Sound.ENTITY_EGG_THROW, volume, pitch);
+        return true;
     }
 
     @EventHandler
@@ -53,16 +66,19 @@ public final class WeaponGrenade implements Listener {
 
     @EventHandler
     private void onProjectileHit(final ProjectileHitEvent event) {
-        if (event.getEntityType() == EntityType.EGG) {
-            final Projectile projectile = event.getEntity();
+        if (event.getEntityType() != EntityType.EGG) {
+            return;
+        }
 
-            if (Component.text("WeaponGrenade").equals(projectile.customName())) {
-                final Location location = projectile.getLocation();
-                final World world = location.getWorld();
-                final float power = 6;
+        final Projectile projectile = event.getEntity();
 
-                world.createExplosion(location, power);
-            }
+        if (Component.text("WeaponGrenade").equals(projectile.customName())) {
+            final Location location = projectile.getLocation();
+            final World world = location.getWorld();
+
+            world.createExplosion(location, EXPLOSION_POWER);
+            // seems our eggs don't despawn on hit? just kill it explicitly for now
+            projectile.remove();
         }
     }
 }

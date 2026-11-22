@@ -1,10 +1,7 @@
 package pw.kaboom.weapons.modules.weapons;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.UUID;
-
+import com.destroystokyo.paper.event.server.ServerTickStartEvent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,33 +17,50 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import pw.kaboom.weapons.Main;
 
-import com.destroystokyo.paper.event.server.ServerTickStartEvent;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
-
-public final class WeaponMachineGun implements Listener {
-
+public final class WeaponMachineGun implements Weapon, Listener {
     private static final int MAX_BULLET_COUNT = 20;
-    private static HashMap<UUID, Integer> machineGunActive = new HashMap<UUID, Integer>();
+    private static final int POTION_DURATION = 90000;
+    private static final int POTION_AMPLIFIER = 3;
+    private static final double BULLET_SPEED = 12;
 
-    public static void rightClick(final Material item, final Component name,
-                                  final PlayerInteractEvent event) {
-        if (item == Material.GOLDEN_HORSE_ARMOR && Component.text("Machine Gun")
-                .decoration(TextDecoration.ITALIC, false).equals(name)) {
-            final UUID playerUUID = event.getPlayer().getUniqueId();
+    private final Map<UUID, Integer> activeFiring = new HashMap<>();
 
-            if (!machineGunActive.containsKey(playerUUID)) {
-                final int numFiredBullets = 0;
-                machineGunActive.put(playerUUID, numFiredBullets);
-            }
-            event.setCancelled(true);
-        }
+    @Override
+    public String getKey() {
+        return "machinegun";
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        final ItemStack weapon = ItemStack.of(Material.GOLDEN_HORSE_ARMOR);
+        weapon.editMeta(meta -> {
+            meta.displayName(Component.text("Machine Gun"));
+            meta.getPersistentDataContainer().set(
+                    Main.getPdcKey(),
+                    PersistentDataType.LIST.strings(),
+                    List.of(getKey())
+            );
+        });
+        return weapon;
+    }
+
+    @Override
+    public boolean rightClick(final Player player) {
+        activeFiring.putIfAbsent(player.getUniqueId(), 0);
+        return true;
     }
 
     /* Make shooter invulnerable to weapon projectiles */
@@ -72,21 +86,18 @@ public final class WeaponMachineGun implements Listener {
         if (collidedWith.getType() == EntityType.PLAYER
                 && projectile.getShooter() instanceof Player
                 && ((Player) projectile.getShooter()).getUniqueId().equals(
-                    collidedWith.getUniqueId())) {
+                collidedWith.getUniqueId())) {
             event.setCancelled(true);
-
         } else if (collidedWith instanceof LivingEntity) {
-            final int duration = 90000;
-            final int amplifier = 3;
             final boolean ambient = true;
             final boolean particles = false;
 
             final PotionEffect harm = new PotionEffect(
-                PotionEffectType.HARM,
-                duration,
-                amplifier,
-                ambient,
-                particles
+                    PotionEffectType.INSTANT_DAMAGE,
+                    POTION_DURATION,
+                    POTION_AMPLIFIER,
+                    ambient,
+                    particles
             );
 
             ((LivingEntity) collidedWith).addPotionEffect(harm);
@@ -94,15 +105,15 @@ public final class WeaponMachineGun implements Listener {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onTickStart(ServerTickStartEvent event) {
-        if (machineGunActive.isEmpty()) {
+    private void onTickStart(final ServerTickStartEvent event) {
+        if (activeFiring.isEmpty()) {
             return;
         }
 
-        Iterator<Entry<UUID, Integer>> iterator = machineGunActive.entrySet().iterator();
+        final Iterator<Map.Entry<UUID, Integer>> iterator = activeFiring.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            final Entry<UUID, Integer> entry = iterator.next();
+            final Map.Entry<UUID, Integer> entry = iterator.next();
             final UUID playerUUID = entry.getKey();
             final Player player = Bukkit.getPlayer(playerUUID);
             int numFiredBullets = entry.getValue();
@@ -114,9 +125,9 @@ public final class WeaponMachineGun implements Listener {
 
             final Location eyeLocation = player.getEyeLocation();
             final World world = player.getWorld();
-            final Vector velocity = eyeLocation.getDirection().multiply(12);
+            final Vector velocity = eyeLocation.getDirection().multiply(BULLET_SPEED);
 
-            world.getChunkAtAsync(eyeLocation).thenAccept(chunk -> {
+            world.getChunkAtAsync(eyeLocation).thenAccept(_ -> {
                 final Arrow arrow = player.launchProjectile(Arrow.class);
                 final float volume = 1.0F;
                 final float pitch = 63.0F;
@@ -125,16 +136,11 @@ public final class WeaponMachineGun implements Listener {
                 arrow.setShooter(player);
                 arrow.setVelocity(velocity);
 
-                world.playSound(
-                    eyeLocation,
-                    Sound.ENTITY_GENERIC_EXPLODE,
-                    volume,
-                    pitch
-                );
+                world.playSound(eyeLocation, Sound.ENTITY_GENERIC_EXPLODE, volume, pitch);
             });
 
             numFiredBullets++;
-            machineGunActive.put(playerUUID, numFiredBullets);
+            entry.setValue(numFiredBullets);
 
             if (numFiredBullets >= MAX_BULLET_COUNT) {
                 iterator.remove();

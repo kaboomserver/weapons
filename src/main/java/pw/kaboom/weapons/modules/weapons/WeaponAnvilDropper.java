@@ -1,37 +1,48 @@
 package pw.kaboom.weapons.modules.weapons;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
+import pw.kaboom.weapons.Main;
+import pw.kaboom.weapons.utils.EntityUtils;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.List;
 
-public final class WeaponAnvilDropper {
-    private WeaponAnvilDropper() {
+public final class WeaponAnvilDropper implements Weapon {
+    private static final int MIN = -2;
+    private static final int MAX = 2;
+
+    @Override
+    public String getKey() {
+        return "anvildropper";
     }
 
-    public static void leftClick(final Material item, final Component name,
-                                 final PlayerInteractEvent event) {
-        if (item == Material.ANVIL && Component.text("Anvil Dropper")
-                .decoration(TextDecoration.ITALIC, false).equals(name)) {
-            final int min = -2;
-            final int max = 2;
+    @Override
+    public ItemStack getItemStack() {
+        final ItemStack weapon = ItemStack.of(Material.ANVIL);
+        weapon.editMeta(meta -> {
+            meta.displayName(Component.text("Anvil Dropper"));
+            meta.getPersistentDataContainer().set(
+                    Main.getPdcKey(),
+                    PersistentDataType.LIST.strings(),
+                    List.of(getKey())
+            );
+        });
+        return weapon;
+    }
 
-            for (int x = min; x <= max; x++) {
-                for (int z = min; z <= max; z++) {
-                    final Location blockLocation = event.getPlayer().getLocation()
+    @Override
+    public boolean leftClick(final Player player) {
+        for (int x = MIN; x <= MAX; x++) {
+            for (int z = MIN; z <= MAX; z++) {
+                final Location blockLocation = player.getLocation()
                         .subtract(x, 0, z);
-                    final World world = event.getPlayer().getWorld();
-
-                    world.spawnFallingBlock(
-                        blockLocation,
-                        Material.ANVIL.createBlockData()
-                    );
-                }
+                EntityUtils.spawnFallingBlock(blockLocation, Material.ANVIL);
             }
-            event.setCancelled(true);
         }
+        return true;
     }
 }

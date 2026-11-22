@@ -8,49 +8,48 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
+import pw.kaboom.weapons.Main;
+import pw.kaboom.weapons.WeaponMenuHolder;
+
+import java.util.List;
 
 public final class PlayerReceiveWeapon implements Listener {
     @EventHandler
-    void onInventoryClick(final InventoryClickEvent event) {
-        final Component weaponViewName = Component.text("Weapons");
+    private void onInventoryClick(final InventoryClickEvent event) {
         final InventoryView view = event.getView();
-        final Component viewTitle = view.title();
-
-        if (event.isCancelled() || !viewTitle.equals(weaponViewName)) {
-            return;
-        }
-
         final Inventory clickedInventory = event.getClickedInventory();
 
-        if (clickedInventory == null) {
-            return;
-        }
-
-        if (!clickedInventory.equals(view.getTopInventory())) {
+        if (event.isCancelled()
+                || clickedInventory == null
+                || !(view.getTopInventory().getHolder() instanceof WeaponMenuHolder)
+                || !clickedInventory.equals(view.getTopInventory())) {
             return;
         }
 
         final ItemStack item = event.getCurrentItem();
 
-        if (item == null) {
+        if (item == null || !item.hasItemMeta()) {
             return;
         }
 
-        final Component weaponName = item.getItemMeta().displayName();
+        final List<String> keys = item.getItemMeta().getPersistentDataContainer()
+                .get(Main.getPdcKey(), PersistentDataType.LIST.strings());
 
-        if (weaponName == null) {
+        if (keys == null || keys.stream().noneMatch(Main.getWeapons()::containsKey)) {
             return;
         }
 
+        final Component weaponName = item.getItemMeta().customName();
         final Player player = (Player) event.getWhoClicked();
 
         player.getInventory().addItem(item);
         player.closeInventory();
+
         player.sendMessage(
-            Component.text("You have received the ")
-                .append(weaponName)
-                .append(Component.text("!"))
+                Component.text("You have received the ")
+                        .append(weaponName != null ? weaponName : Component.text("weapon"))
+                        .append(Component.text("!"))
         );
     }
 }
-
