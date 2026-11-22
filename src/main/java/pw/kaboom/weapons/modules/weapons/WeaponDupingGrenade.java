@@ -19,6 +19,10 @@ import pw.kaboom.weapons.Main;
 
 import java.util.List;
 
+/**
+ * added by popular demand
+ * this is just a dupe (lmao) of {@link WeaponGrenade} but without the final projectile.remove()
+ */
 public final class WeaponDupingGrenade implements Weapon, Listener {
     private static final float EXPLOSION_POWER = 6;
 

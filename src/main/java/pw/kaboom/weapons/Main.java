@@ -20,7 +20,7 @@ import java.util.Map;
 
 public final class Main extends JavaPlugin {
     private static NamespacedKey pdcKey;
-    private final Map<String, Weapon> weapons = new LinkedHashMap<>(11);
+    private final Map<String, Weapon> weapons = new LinkedHashMap<>(12);
 
     public static NamespacedKey getPdcKey() {
         if (pdcKey == null) {
@@ -46,6 +46,7 @@ public final class Main extends JavaPlugin {
                 new WeaponArcher(),
                 new WeaponArmageddon(),
                 new WeaponBlobinator(),
+                new WeaponDupingGrenade(),
                 new WeaponExplosiveCrossbow(),
                 new WeaponGrenade(),
                 new WeaponLaser(),
