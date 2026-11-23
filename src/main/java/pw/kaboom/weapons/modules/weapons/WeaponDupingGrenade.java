@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Egg;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -19,7 +18,7 @@ import pw.kaboom.weapons.Main;
 
 import java.util.List;
 
-public final class WeaponDupingGrenade implements Weapon, Listener {
+public sealed class WeaponDupingGrenade implements Weapon, Listener permits WeaponGrenade {
     private static final float EXPLOSION_POWER = 6;
 
     @Override
@@ -45,9 +44,11 @@ public final class WeaponDupingGrenade implements Weapon, Listener {
     public boolean rightClick(final Player player) {
         final Location eyeLocation = player.getEyeLocation();
 
-        final Egg egg = player.launchProjectile(Egg.class);
-        egg.customName(Component.text("WeaponDupingGrenade"));
-        egg.setShooter(player);
+        final Egg egg = player.launchProjectile(Egg.class, null, projectile -> {
+            projectile.getPersistentDataContainer()
+                    .set(Main.getPdcKey(), PersistentDataType.LIST.strings(), List.of(getKey()));
+            projectile.setShooter(player);
+        });
 
         final World world = player.getWorld();
         final float volume = 1.0F;
@@ -58,25 +59,26 @@ public final class WeaponDupingGrenade implements Weapon, Listener {
     }
 
     @EventHandler
-    private void onPlayerEggThrow(final PlayerEggThrowEvent event) {
-        if (Component.text("WeaponDupingGrenade").equals(event.getEgg().customName())) {
+    void onPlayerEggThrow(final PlayerEggThrowEvent event) {
+        if (isGrenade(event.getEgg())) {
             event.setHatching(false);
         }
     }
 
     @EventHandler
-    private void onProjectileHit(final ProjectileHitEvent event) {
-        if (event.getEntityType() != EntityType.EGG) {
-            return;
-        }
-
+    void onProjectileHit(final ProjectileHitEvent event) {
         final Projectile projectile = event.getEntity();
-
-        if (Component.text("WeaponDupingGrenade").equals(projectile.customName())) {
+        if (isGrenade(projectile)) {
             final Location location = projectile.getLocation();
             final World world = location.getWorld();
 
             world.createExplosion(location, EXPLOSION_POWER);
         }
+    }
+
+    private boolean isGrenade(final Projectile projectile) {
+        final List<String> maybeWeapon = projectile.getPersistentDataContainer()
+                .get(Main.getPdcKey(), PersistentDataType.LIST.strings());
+        return maybeWeapon != null && maybeWeapon.contains(getKey());
     }
 }

@@ -5,11 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.SpectralArrow;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
@@ -59,13 +55,16 @@ public final class WeaponArcher implements Weapon, Listener {
             final Vector randomDirection = new Vector(randomX, randomY, randomZ)
                     .normalize().multiply(ARROW_SPEED);
 
-            final SpectralArrow arrow = (SpectralArrow) world.spawnEntity(
+            world.spawn(
                     player.getLocation(),
-                    EntityType.SPECTRAL_ARROW
+                    SpectralArrow.class,
+                    entity -> {
+                        entity.getPersistentDataContainer()
+                                .set(Main.getPdcKey(), PersistentDataType.STRING, getKey());
+                        entity.setShooter(player);
+                        entity.setVelocity(randomDirection);
+                    }
             );
-            arrow.customName(ARROW_NAME);
-            arrow.setShooter(player);
-            arrow.setVelocity(randomDirection);
         }
 
         final Location eyeLocation = player.getEyeLocation();
@@ -78,14 +77,16 @@ public final class WeaponArcher implements Weapon, Listener {
 
     /* Make shooter invulnerable to weapon projectiles */
     @EventHandler
-    private void onProjectileHit(final ProjectileHitEvent event) {
+    void onProjectileHit(final ProjectileHitEvent event) {
         if (event.getEntityType() != EntityType.SPECTRAL_ARROW) {
             return;
         }
 
         final Projectile projectile = event.getEntity();
 
-        if (!ARROW_NAME.equals(projectile.customName())) {
+        final String maybeWeapon = projectile.getPersistentDataContainer()
+                .get(Main.getPdcKey(),PersistentDataType.STRING);
+        if (maybeWeapon!=null&&!maybeWeapon.equals(getKey())) {
             return;
         }
 

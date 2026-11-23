@@ -56,13 +56,17 @@ public final class WeaponArmageddon implements Weapon, Listener {
 
             final Fireball fireball = world.spawn(
                     eyeLocation.add(x, 0, z),
-                    Fireball.class
+                    Fireball.class,
+                    entity -> {
+                        entity.setDirection(velocity);
+                        entity.setShooter(player);
+                        entity.setYield(YIELD);
+                        entity.getPersistentDataContainer()
+                                .set(Main.getPdcKey(), PersistentDataType.STRING, getKey());
+                    }
             );
 
             fireball.customName(Component.text("WeaponArmageddonCharge"));
-            fireball.setDirection(velocity);
-            fireball.setShooter(player);
-            fireball.setYield(YIELD);
         }
 
         final Location eyeLocation = player.getEyeLocation();
@@ -76,14 +80,15 @@ public final class WeaponArmageddon implements Weapon, Listener {
     /* Make shooter invulnerable to weapon projectiles, and prevent charges from
     colliding with each other */
     @EventHandler
-    private void onProjectileHit(final ProjectileHitEvent event) {
+    void onProjectileHit(final ProjectileHitEvent event) {
         if (event.getEntityType() != EntityType.FIREBALL) {
             return;
         }
 
         final Projectile projectile = event.getEntity();
-
-        if (!Component.text("WeaponArmageddonCharge").equals(projectile.customName())) {
+        final String maybeWeapon = projectile.getPersistentDataContainer().get(Main.getPdcKey(),
+                PersistentDataType.STRING);
+        if (maybeWeapon != null && maybeWeapon.equals(getKey())) {
             return;
         }
 

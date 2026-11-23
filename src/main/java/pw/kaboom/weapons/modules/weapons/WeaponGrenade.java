@@ -6,20 +6,17 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Egg;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import pw.kaboom.weapons.Main;
 
 import java.util.List;
 
-public final class WeaponGrenade implements Weapon, Listener {
+public final class WeaponGrenade extends WeaponDupingGrenade implements Weapon, Listener {
     private static final float EXPLOSION_POWER = 6;
 
     @Override
@@ -57,28 +54,10 @@ public final class WeaponGrenade implements Weapon, Listener {
         return true;
     }
 
+    @Override
     @EventHandler
-    private void onPlayerEggThrow(final PlayerEggThrowEvent event) {
-        if (Component.text("WeaponGrenade").equals(event.getEgg().customName())) {
-            event.setHatching(false);
-        }
-    }
-
-    @EventHandler
-    private void onProjectileHit(final ProjectileHitEvent event) {
-        if (event.getEntityType() != EntityType.EGG) {
-            return;
-        }
-
-        final Projectile projectile = event.getEntity();
-
-        if (Component.text("WeaponGrenade").equals(projectile.customName())) {
-            final Location location = projectile.getLocation();
-            final World world = location.getWorld();
-
-            world.createExplosion(location, EXPLOSION_POWER);
-            // seems our eggs don't despawn on hit? just kill it explicitly for now
-            projectile.remove();
-        }
+    void onProjectileHit(final ProjectileHitEvent event) {
+        super.onProjectileHit(event);
+        event.getEntity().remove();
     }
 }
