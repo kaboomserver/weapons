@@ -17,8 +17,6 @@ import pw.kaboom.weapons.Main;
 import java.util.List;
 
 public final class WeaponGrenade extends WeaponDupingGrenade implements Weapon, Listener {
-    private static final float EXPLOSION_POWER = 6;
-
     @Override
     public String getKey() {
         return "grenade";
